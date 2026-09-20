@@ -21,10 +21,31 @@ var noise: FastNoiseLite
 var detail_noise: FastNoiseLite
 
 func _ready() -> void:
-    generate(get_parent())
+    # Main.gd also builds the prototype scene during its _ready(). Defer generation
+    # until the scene tree is ready so add_child()/free() are not called while a
+    # parent is still busy initializing its children.
+    call_deferred("_generate_deferred")
+
+func _generate_deferred() -> void:
+    if is_inside_tree():
+        generate(get_parent())
 
 func generate(parent: Node3D) -> void:
-    # Remove the old prototype terrain so only the chunked terrain is rendered/collided.
+    chunks.clear()
+
+    # Remove previous generated terrain if this is regenerated/reloaded.
+    var old_terrain: Node = parent.get_node_or_null("TerrainChunks")
+    if old_terrain != null:
+        old_terrain.free()
+    var old_ocean: Node = parent.get_node_or_null("Ocean")
+    if old_ocean != null:
+        old_ocean.free()
+    var old_coast: Node = parent.get_node_or_null("CoastDetails")
+    if old_coast != null:
+        old_coast.free()
+
+    # Remove the old prototype island geometry/collision. The chunk system owns
+    # terrain collision from this point onward.
     var legacy_island: Node = parent.get_node_or_null("Island")
     if legacy_island != null:
         for child in legacy_island.get_children():
