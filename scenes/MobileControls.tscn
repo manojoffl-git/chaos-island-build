@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bs3rbp0yavbme"]
+[gd_scene format=3 uid="uid://bs3rbp0yavbme"]
 
-[ext_resource type="Script" path="res://scripts/mobile_controls.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/mobile_joystick.gd" id="2"]
-[ext_resource type="Script" path="res://scripts/mobile_camera_touch.gd" id="3"]
+[ext_resource type="Script" uid="uid://bboy5rvmp6x0r" path="res://scripts/mobile_controls.gd" id="1"]
+[ext_resource type="Script" uid="uid://dwby32kguxedh" path="res://scripts/mobile_joystick.gd" id="2"]
+[ext_resource type="Script" uid="uid://coirgv8imyrb5" path="res://scripts/mobile_camera_touch.gd" id="3"]
 
 [sub_resource type="StyleBoxFlat" id="ButtonStyle"]
 bg_color = Color(0.06, 0.08, 0.1, 0.78)
@@ -28,18 +28,16 @@ offset_left = 36.0
 offset_top = -256.0
 offset_right = 256.0
 offset_bottom = -36.0
+grow_vertical = 0
 script = ExtResource("2")
 
 [node name="CameraTouch" type="Control" parent="." unique_id=330000001]
 layout_mode = 3
-anchors_preset = 12
 anchor_left = 0.5
-anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 0
 script = ExtResource("3")
 
 [node name="Actions" type="Control" parent="." unique_id=94950940]
@@ -54,10 +52,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -256.0
-offset_top = -238.0
-offset_right = -111.0
-offset_bottom = -168.0
+offset_left = 1068.0
+offset_top = 373.0
+offset_right = 1213.0
+offset_bottom = 443.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -72,10 +70,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -248.0
-offset_top = -394.0
-offset_right = -129.0
-offset_bottom = -324.0
+offset_left = 1086.0
+offset_top = 218.0
+offset_right = 1205.0
+offset_bottom = 288.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -90,10 +88,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -424.0
-offset_top = -393.0
-offset_right = -309.0
-offset_bottom = -323.0
+offset_left = 915.0
+offset_top = 229.0
+offset_right = 1030.0
+offset_bottom = 299.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -103,11 +101,10 @@ text = "THROW"
 
 [node name="Disaster" type="Button" parent="Actions" unique_id=1336202856]
 layout_mode = 1
-anchors_preset = 0
-offset_left = 36.0
-offset_top = 28.0
-offset_right = 181.0
-offset_bottom = 98.0
+offset_left = 41.0
+offset_top = 43.0
+offset_right = 186.0
+offset_bottom = 113.0
 theme_override_colors/font_color = Color(1, 0.75, 0.2, 1)
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("ButtonStyle")

@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://cb4vq3syd5ikm"]
+
+[ext_resource type="Script" uid="uid://b80jxrk4tmbgw" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/WorldObjects.tscn" id="3_world"]
+[ext_resource type="PackedScene" uid="uid://bs3rbp0yavbme" path="res://scenes/MobileControls.tscn" id="4_mobile"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.16, 0.28, 0.45, 1)
+sky_horizon_color = Color(0.58, 0.68, 0.76, 1)
+ground_bottom_color = Color(0.06, 0.08, 0.1, 1)
+ground_horizon_color = Color(0.43, 0.49, 0.53, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 2
+sky = SubResource("Sky_main")
+ambient_light_source = 3
+ambient_light_color = Color(0.62, 0.69, 0.76, 1)
+ambient_light_energy = 0.42
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="IslandMaterial"]
+albedo_color = Color(0.36, 0.59, 0.32, 1)
+roughness = 0.96
+
+[sub_resource type="CylinderMesh" id="IslandMesh"]
+top_radius = 88.0
+bottom_radius = 96.0
+height = 0.8
+
+[sub_resource type="CylinderShape3D" id="IslandCollisionShape"]
+height = 0.8
+radius = 96.0
+
+[sub_resource type="StandardMaterial3D" id="OceanMaterial"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.24, 0.56, 0.69, 0.84)
+metallic = 0.03
+roughness = 0.2
+
+[sub_resource type="QuadMesh" id="OceanMesh"]
+size = Vector2(520, 520)
+
+[node name="ChaosIsland" type="Node3D" unique_id=136774653]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1511431784]
+environment = SubResource("Environment_main")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=649837011]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+light_energy = 0.72
+shadow_enabled = true
+
+[node name="Island" type="MeshInstance3D" parent="." unique_id=975465457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
+material_override = SubResource("IslandMaterial")
+mesh = SubResource("IslandMesh")
+
+[node name="IslandCollision" type="StaticBody3D" parent="." unique_id=1889992595]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="IslandCollision" unique_id=295551283]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.22, 0)
+shape = SubResource("IslandCollisionShape")
+
+[node name="Ocean" type="MeshInstance3D" parent="." unique_id=814311386]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -0.05, 0)
+material_override = SubResource("OceanMaterial")
+mesh = SubResource("OceanMesh")
+
+[node name="WorldObjects" parent="." unique_id=1477232966 instance=ExtResource("3_world")]
+
+[node name="Player" parent="." unique_id=569023575 instance=ExtResource("2_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26, 6)
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=787174483]
+
+[node name="Status" type="Label" parent="UI" unique_id=1189530346]
+offset_left = 28.0
+offset_top = 24.0
+offset_right = 900.0
+offset_bottom = 115.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "CHAOS ISLAND"
+
+[node name="MobileControls" parent="." unique_id=1067040328 instance=ExtResource("4_mobile")]
