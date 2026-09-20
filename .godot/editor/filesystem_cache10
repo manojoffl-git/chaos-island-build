@@ -1,0 +1,8 @@
+78098b89c88a74ebe8c20117b8754620
+::res://::1789902834
+README.md::TextFile::-1::1789882836::0::1::::<><><>0<>0<><>::
+::res://scenes/::1789902793
+Main.tscn::PackedScene::-1::1789882806::0::1::::<><><>0<>0<><>::res://scripts/main.gd<>res://scripts/player.gd
+::res://scripts/::1789902793
+main.gd::GDScript::4754850403482862230::1789882806::0::1::::<>Node3D<><>0<>0<><>::
+player.gd::GDScript::6173971111166436024::1789882806::0::1::::<>CharacterBody3D<><>0<>0<><>::
