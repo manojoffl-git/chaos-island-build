@@ -24,6 +24,12 @@ func _ready() -> void:
     generate(get_parent())
 
 func generate(parent: Node3D) -> void:
+    # Remove the old prototype terrain so only the chunked terrain is rendered/collided.
+    var legacy_island: Node = parent.get_node_or_null("Island")
+    if legacy_island != null:
+        for child in legacy_island.get_children():
+            child.free()
+
     terrain_material = make_material(Color("#5f9b55"), 0.92)
     water_material = make_water_material()
 
