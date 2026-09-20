@@ -6,9 +6,27 @@ var world_objects: Array[RigidBody3D] = []
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var time_alive: float = 0.0
 var status_label: Label
+var island_generator: Node3D
 
 func _ready() -> void:
     rng.seed = 424242
+    call_deferred("_initialize_world")
+
+func _initialize_world() -> void:
+    # Generate terrain and its collision before spawning physics objects.
+    # This prevents bodies from falling through the world during startup.
+    await get_tree().process_frame
+    island_generator = $IslandGenerator
+    island_generator.generate(self)
+    await get_tree().process_frame
+
+    # Put the player exactly on the generated terrain at the spawn point.
+    var player: CharacterBody3D = $Player
+    var spawn_x: float = 0.0
+    var spawn_z: float = 6.0
+    player.global_position = Vector3(spawn_x, island_generator.height_at(spawn_x, spawn_z) + 0.08, spawn_z)
+    player.velocity = Vector3.ZERO
+
     build_world()
     setup_ui()
 
@@ -57,9 +75,13 @@ func mesh_sphere(radius: float, color: Color, parent: Node3D, pos: Vector3 = Vec
     parent.add_child(node)
     return node
 
+func terrain_height(x: float, z: float) -> float:
+    if island_generator != null and island_generator.has_method("height_at"):
+        return island_generator.height_at(x, z)
+    return 0.0
+
 func build_world() -> void:
-    # Terrain is generated exclusively by IslandGenerator.
-    # The old prototype hills are disabled so the procedural terrain owns the island shape.
+    # Terrain is generated first by IslandGenerator.
     build_lake()
     build_trees()
     build_cemetery()
@@ -71,11 +93,12 @@ func build_island() -> void:
 
 func build_lake() -> void:
     var lake: Node3D = $Lake
-    var water: MeshInstance3D = mesh_cylinder(5.5, 0.18, Color("#4ea9d6"), lake, Vector3(8.0, 0.22, -7.0), "LakeWater")
+    var water: MeshInstance3D = mesh_cylinder(5.5, 0.18, Color("#4ea9d6"), lake, Vector3(8.0, terrain_height(8.0, -7.0) + 0.12, -7.0), "LakeWater")
     water.scale = Vector3(1.35, 1.0, 0.8)
-    mesh_box(Vector3(5.0, 0.22, 1.2), Color("#9b6b3e"), lake, Vector3(8.0, 0.42, -1.4), "Dock")
+    var lake_y: float = terrain_height(8.0, -7.0)
+    mesh_box(Vector3(5.0, 0.22, 1.2), Color("#9b6b3e"), lake, Vector3(8.0, lake_y + 0.42, -1.4), "Dock")
     for i in range(3):
-        mesh_cylinder(0.12, 1.2, Color("#68452d"), lake, Vector3(6.0 + float(i) * 2.0, -0.1, -1.4), "DockPost")
+        mesh_cylinder(0.12, 1.2, Color("#68452d"), lake, Vector3(6.0 + float(i) * 2.0, lake_y - 0.1, -1.4), "DockPost")
 
 func build_hills() -> void:
     pass
@@ -95,7 +118,7 @@ func build_trees() -> void:
 func build_tree(parent: Node3D, pos: Vector3, index: int) -> void:
     var tree: Node3D = Node3D.new()
     tree.name = "Tree_%02d" % index
-    tree.position = pos
+    tree.position = Vector3(pos.x, terrain_height(pos.x, pos.z), pos.z)
     parent.add_child(tree)
     mesh_cylinder(0.35, 3.2, Color("#6f472d"), tree, Vector3(0, 1.6, 0), "Trunk")
     mesh_sphere(1.7, Color("#2f7f46"), tree, Vector3(0, 3.4, 0), "LeafBall")
@@ -114,6 +137,8 @@ func build_tree(parent: Node3D, pos: Vector3, index: int) -> void:
 
 func build_cemetery() -> void:
     var cemetery: Node3D = $Cemetery
+    var ground_y: float = terrain_height(-10.0, -7.0)
+    cemetery.position.y = ground_y
     mesh_box(Vector3(11, 0.12, 8), Color("#4d8247"), cemetery, Vector3(-10, 0.17, -7), "CemeteryGround")
     for row in range(3):
         for col in range(4):
@@ -121,14 +146,14 @@ func build_cemetery() -> void:
             var z: float = -9.5 + float(row) * 2.3
             var grave: Node3D = Node3D.new()
             grave.name = "Grave_%d_%d" % [row, col]
-            grave.position = Vector3(x, 0.25, z)
+            grave.position = Vector3(x + 10.0, 0.25, z + 7.0)
             cemetery.add_child(grave)
             mesh_box(Vector3(0.65, 1.1, 0.22), Color("#d9d9cf"), grave, Vector3(0, 0.55, 0), "Tombstone")
             mesh_box(Vector3(0.75, 0.16, 0.18), Color("#d9d9cf"), grave, Vector3(0, 0.95, 0), "TombstoneTop")
             mesh_box(Vector3(0.16, 0.8, 0.20), Color("#d9d9cf"), grave, Vector3(0, 0.58, 0), "Cross")
             mesh_box(Vector3(0.7, 0.10, 1.1), Color("#4f3829"), grave, Vector3(0, 0.05, 0.9), "Dirt")
-    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(-10, 0.45, -11), "Fence")
-    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(-10, 0.45, -3), "Fence")
+    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(0, 0.45, -4), "Fence")
+    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(0, 0.45, 4), "Fence")
 
 func build_props() -> void:
     var props: Node3D = $Props
@@ -136,21 +161,23 @@ func build_props() -> void:
         var x: float = -8.0 + float((i * 7) % 17)
         var z: float = 2.0 + float((i * 5) % 14)
         var color: Color = [Color("#d9823b"), Color("#e6c44f"), Color("#4f9bd1"), Color("#b85d66")][i % 4]
-        make_physics_box(props, Vector3(x, 0.8, z), Vector3(1.5, 1.5, 1.5), color, "Crate_%02d" % i)
+        make_physics_box(props, Vector3(x, 0.0, z), Vector3(1.5, 1.5, 1.5), color, "Crate_%02d" % i)
     for i in range(5):
-        var barrel: RigidBody3D = make_physics_cylinder(props, Vector3(11.0 + float(i) * 1.5, 0.75, 3.0), 0.55, 1.5, Color("#b66a39"), "Barrel_%02d" % i)
+        var barrel: RigidBody3D = make_physics_cylinder(props, Vector3(11.0 + float(i) * 1.5, 0.0, 3.0), 0.55, 1.5, Color("#b66a39"), "Barrel_%02d" % i)
         barrel.rotation_degrees.z = 90.0
-    for p in [Vector3(3, 0.7, 5), Vector3(-4, 0.7, 5)]:
-        mesh_box(Vector3(3.0, 0.25, 0.5), Color("#8b5a32"), props, p, "BenchSeat")
-        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(-1.1, -0.4, 0), "BenchLeg")
-        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(1.1, -0.4, 0), "BenchLeg")
-    mesh_cylinder(1.1, 0.18, Color("#5a5a5a"), props, Vector3(0, 0.25, 8), "FirePit")
-    mesh_sphere(0.45, Color("#ff9b32"), props, Vector3(0, 0.75, 8), "Fire")
+    for p in [Vector3(3, 0.0, 5), Vector3(-4, 0.0, 5)]:
+        var y: float = terrain_height(p.x, p.z)
+        mesh_box(Vector3(3.0, 0.25, 0.5), Color("#8b5a32"), props, Vector3(p.x, y + 0.82, p.z), "BenchSeat")
+        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, Vector3(p.x - 1.1, y + 0.0, p.z), "BenchLeg")
+        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, Vector3(p.x + 1.1, y + 0.0, p.z), "BenchLeg")
+    var fire_y: float = terrain_height(0.0, 8.0)
+    mesh_cylinder(1.1, 0.18, Color("#5a5a5a"), props, Vector3(0, fire_y + 0.25, 8), "FirePit")
+    mesh_sphere(0.45, Color("#ff9b32"), props, Vector3(0, fire_y + 0.75, 8), "Fire")
 
 func make_physics_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color, object_name: String) -> RigidBody3D:
     var body: RigidBody3D = RigidBody3D.new()
     body.name = object_name
-    body.position = pos
+    body.position = Vector3(pos.x, terrain_height(pos.x, pos.z) + size.y * 0.5 + 0.06, pos.z)
     body.mass = 1.2
     body.linear_damp = 0.25
     body.angular_damp = 0.4
@@ -170,7 +197,7 @@ func make_physics_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color,
 func make_physics_cylinder(parent: Node3D, pos: Vector3, radius: float, height: float, color: Color, object_name: String) -> RigidBody3D:
     var body: RigidBody3D = RigidBody3D.new()
     body.name = object_name
-    body.position = pos
+    body.position = Vector3(pos.x, terrain_height(pos.x, pos.z) + height * 0.5 + 0.06, pos.z)
     body.mass = 1.5
     body.linear_damp = 0.3
     body.angular_damp = 0.45
@@ -190,7 +217,9 @@ func make_physics_cylinder(parent: Node3D, pos: Vector3, radius: float, height: 
 func build_building_materials() -> void:
     var builds: Node3D = $BuildZone
     for i in range(8):
-        var p: Vector3 = Vector3(-2.0 + float(i % 4) * 1.8, 0.65 + float(i / 4) * 1.2, -2.0)
+        var x: float = -2.0 + float(i % 4) * 1.8
+        var z: float = -2.0
+        var p: Vector3 = Vector3(x, 0.0, z)
         var colors: Array[Color] = [Color("#a86b3f"), Color("#d9a441"), Color("#7b8791"), Color("#78a85b")]
         make_physics_box(builds, p, Vector3(1.5, 1.0, 1.0), colors[i % colors.size()], "BuildMaterial_%02d" % i)
 
