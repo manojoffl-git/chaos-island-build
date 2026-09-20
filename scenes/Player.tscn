@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1"]
+[sub_resource type="CapsuleShape3D" id="C"]
+radius = 0.45
+height = 2.5
+[sub_resource type="CapsuleMesh" id="B"]
+radius = 0.55
+height = 1.65
+[sub_resource type="SphereMesh" id="H"]
+radius = 0.68
+height = 1.36
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1")
+[node name="Collision" type="CollisionShape3D" parent="."]
+shape = SubResource("C")
+position = Vector3(0, 1.25, 0)
+[node name="CharacterVisual" type="Node3D" parent="."]
+[node name="Body" type="MeshInstance3D" parent="CharacterVisual"]
+mesh = SubResource("B")
+position = Vector3(0, 1.25, 0)
+[node name="Head" type="MeshInstance3D" parent="CharacterVisual"]
+mesh = SubResource("H")
+position = Vector3(0, 2.45, 0)
+[node name="Camera" type="Camera3D" parent="."]
+position = Vector3(0, 4, 8.5)
+rotation_degrees = Vector3(-19, 0, 0)
+current = true
