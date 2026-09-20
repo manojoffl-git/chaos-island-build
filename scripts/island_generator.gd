@@ -21,35 +21,34 @@ var noise: FastNoiseLite
 var detail_noise: FastNoiseLite
 
 func _ready() -> void:
-    # Main.gd also builds the prototype scene during its _ready(). Defer generation
-    # until the scene tree is ready so add_child()/free() are not called while a
-    # parent is still busy initializing its children.
-    call_deferred("_generate_deferred")
+    # Wait a full frame. Main.gd builds the rest of the prototype in its _ready(),
+    # so this guarantees the scene tree is no longer busy before we create/free nodes.
+    call_deferred("_generate_after_frame")
 
-func _generate_deferred() -> void:
+func _generate_after_frame() -> void:
+    await get_tree().process_frame
     if is_inside_tree():
         generate(get_parent())
 
 func generate(parent: Node3D) -> void:
     chunks.clear()
 
-    # Remove previous generated terrain if this is regenerated/reloaded.
     var old_terrain: Node = parent.get_node_or_null("TerrainChunks")
     if old_terrain != null:
-        old_terrain.free()
+        old_terrain.queue_free()
     var old_ocean: Node = parent.get_node_or_null("Ocean")
     if old_ocean != null:
-        old_ocean.free()
+        old_ocean.queue_free()
     var old_coast: Node = parent.get_node_or_null("CoastDetails")
     if old_coast != null:
-        old_coast.free()
+        old_coast.queue_free()
 
-    # Remove the old prototype island geometry/collision. The chunk system owns
-    # terrain collision from this point onward.
+    # IslandGenerator is now the sole owner of the island terrain. Main.gd no longer
+    # creates the old 44x44 terrain, preventing duplicate geometry and collision.
     var legacy_island: Node = parent.get_node_or_null("Island")
     if legacy_island != null:
         for child in legacy_island.get_children():
-            child.free()
+            child.queue_free()
 
     terrain_material = make_material(Color("#5f9b55"), 0.92)
     water_material = make_water_material()
