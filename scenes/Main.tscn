@@ -1,17 +1,28 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scripts/player.gd" type="Script" id="2_player"]
+[ext_resource path="res://scripts/island_generator.gd" type="Script" id="3_island"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
+sky_top_color = Color(0.18, 0.35, 0.58, 1)
+sky_horizon_color = Color(0.67, 0.75, 0.82, 1)
+ground_bottom_color = Color(0.08, 0.11, 0.14, 1)
+ground_horizon_color = Color(0.52, 0.58, 0.61, 1)
+sun_angle_max = 18.0
+sun_curve = 0.08
+
+[sub_resource type="Sky" id="Sky_main"]
+sky_material = SubResource("ProceduralSkyMaterial_main")
 
 [sub_resource type="Environment" id="Environment_main"]
-background_mode = 1
-background_color = Color(0.45, 0.72, 0.95, 1)
+background_mode = 2
+sky = SubResource("Sky_main")
 ambient_light_source = 3
-ambient_light_color = Color(0.8, 0.86, 1, 1)
-ambient_light_energy = 0.85
+ambient_light_color = Color(0.72, 0.78, 0.84, 1)
+ambient_light_energy = 0.62
 tonemap_mode = 2
-glow_enabled = true
-glow_intensity = 0.35
+glow_enabled = false
 
 [sub_resource type="CapsuleShape3D" id="Capsule_collision"]
 radius = 0.45
@@ -25,12 +36,15 @@ environment = SubResource("Environment_main")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 rotation_degrees = Vector3(-55, -25, 0)
-light_energy = 1.2
+light_energy = 0.9
 shadow_enabled = true
 
 [node name="Island" type="StaticBody3D" parent="."]
 
 [node name="Collision" type="CollisionShape3D" parent="Island"]
+
+[node name="IslandGenerator" type="Node3D" parent="."]
+script = ExtResource("3_island")
 
 [node name="Lake" type="Node3D" parent="."]
 
@@ -45,7 +59,7 @@ shadow_enabled = true
 [node name="BuildZone" type="Node3D" parent="."]
 
 [node name="Player" type="CharacterBody3D" parent="."]
-position = Vector3(0, 1.4, 6)
+position = Vector3(0, 3.0, 6)
 script = ExtResource("2_player")
 
 [node name="Collision" type="CollisionShape3D" parent="Player"]
