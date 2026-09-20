@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1"]
 [sub_resource type="CapsuleShape3D" id="C"]
@@ -7,9 +7,38 @@ height = 2.5
 [sub_resource type="CapsuleMesh" id="B"]
 radius = 0.55
 height = 1.65
+radial_segments = 12
+rings = 4
 [sub_resource type="SphereMesh" id="H"]
 radius = 0.68
 height = 1.36
+radial_segments = 16
+rings = 8
+[sub_resource type="SphereMesh" id="E"]
+radius = 0.09
+height = 0.18
+radial_segments = 10
+rings = 5
+[sub_resource type="SphereMesh" id="K"]
+radius = 0.16
+height = 0.32
+radial_segments = 10
+rings = 5
+[sub_resource type="CylinderMesh" id="A"]
+top_radius = 0.12
+bottom_radius = 0.13
+height = 1.15
+radial_segments = 10
+[sub_resource type="CylinderMesh" id="L"]
+top_radius = 0.13
+bottom_radius = 0.14
+height = 1.15
+radial_segments = 10
+[sub_resource type="SphereMesh" id="F"]
+radius = 0.16
+height = 0.32
+radial_segments = 10
+rings = 5
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1")
 [node name="Collision" type="CollisionShape3D" parent="."]
@@ -22,6 +51,48 @@ position = Vector3(0, 1.25, 0)
 [node name="Head" type="MeshInstance3D" parent="CharacterVisual"]
 mesh = SubResource("H")
 position = Vector3(0, 2.45, 0)
+[node name="LeftEye" type="MeshInstance3D" parent="CharacterVisual/Head"]
+mesh = SubResource("E")
+position = Vector3(-0.23, 0.1, -0.6)
+[node name="RightEye" type="MeshInstance3D" parent="CharacterVisual/Head"]
+mesh = SubResource("E")
+position = Vector3(0.23, 0.1, -0.6)
+[node name="Beak" type="MeshInstance3D" parent="CharacterVisual/Head"]
+mesh = SubResource("K")
+position = Vector3(0, -0.08, -0.68)
+scale = Vector3(1.35, 0.65, 1)
+[node name="LeftArm" type="Node3D" parent="CharacterVisual"]
+position = Vector3(-0.62, 1.72, 0)
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/LeftArm"]
+mesh = SubResource("A")
+position = Vector3(0, -0.575, 0)
+[node name="Hand" type="MeshInstance3D" parent="CharacterVisual/LeftArm"]
+mesh = SubResource("E")
+position = Vector3(0, -1.15, 0)
+[node name="RightArm" type="Node3D" parent="CharacterVisual"]
+position = Vector3(0.62, 1.72, 0)
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/RightArm"]
+mesh = SubResource("A")
+position = Vector3(0, -0.575, 0)
+[node name="Hand" type="MeshInstance3D" parent="CharacterVisual/RightArm"]
+mesh = SubResource("E")
+position = Vector3(0, -1.15, 0)
+[node name="LeftLeg" type="Node3D" parent="CharacterVisual"]
+position = Vector3(-0.27, 0.55, 0)
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/LeftLeg"]
+mesh = SubResource("L")
+position = Vector3(0, -0.575, 0)
+[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/LeftLeg"]
+mesh = SubResource("F")
+position = Vector3(0, -1.16, -0.12)
+[node name="RightLeg" type="Node3D" parent="CharacterVisual"]
+position = Vector3(0.27, 0.55, 0)
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/RightLeg"]
+mesh = SubResource("L")
+position = Vector3(0, -0.575, 0)
+[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/RightLeg"]
+mesh = SubResource("F")
+position = Vector3(0, -1.16, -0.12)
 [node name="Camera" type="Camera3D" parent="."]
 position = Vector3(0, 4, 8.5)
 rotation_degrees = Vector3(-19, 0, 0)
