@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scripts/player.gd" type="Script" id="2_player"]
-[ext_resource path="res://scripts/island_generator.gd" type="Script" id="3_island"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 sky_top_color = Color(0.16, 0.28, 0.45, 1)
@@ -24,6 +23,31 @@ ambient_light_energy = 0.42
 tonemap_mode = 2
 glow_enabled = false
 
+[sub_resource type="CylinderMesh" id="IslandMesh"]
+top_radius = 88.0
+bottom_radius = 96.0
+height = 0.8
+radial_segments = 64
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="IslandMaterial"]
+albedo_color = Color(0.36, 0.59, 0.32, 1)
+roughness = 0.96
+
+[sub_resource type="CylinderShape3D" id="IslandCollisionShape"]
+radius = 96.0
+height = 0.8
+
+[sub_resource type="QuadMesh" id="OceanMesh"]
+size = Vector2(520, 520)
+
+[sub_resource type="StandardMaterial3D" id="OceanMaterial"]
+albedo_color = Color(0.24, 0.56, 0.69, 0.84)
+roughness = 0.2
+metallic = 0.03
+transparency = 1
+cull_mode = 2
+
 [sub_resource type="CapsuleShape3D" id="Capsule_collision"]
 radius = 0.45
 height = 2.5
@@ -39,27 +63,34 @@ rotation_degrees = Vector3(-55, -25, 0)
 light_energy = 0.72
 shadow_enabled = true
 
-[node name="Island" type="StaticBody3D" parent="."]
+[node name="Island" type="MeshInstance3D" parent="."]
+mesh = SubResource("IslandMesh")
+material_override = SubResource("IslandMaterial")
+position = Vector3(0, -0.22, 0)
 
-[node name="Collision" type="CollisionShape3D" parent="Island"]
+[node name="IslandCollision" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 1
 
-[node name="IslandGenerator" type="Node3D" parent="."]
-script = ExtResource("3_island")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="IslandCollision"]
+shape = SubResource("IslandCollisionShape")
+position = Vector3(0, -0.22, 0)
+
+[node name="Ocean" type="MeshInstance3D" parent="."]
+mesh = SubResource("OceanMesh")
+material_override = SubResource("OceanMaterial")
+position = Vector3(0, -0.05, 0)
+rotation_degrees = Vector3(-90, 0, 0)
 
 [node name="Lake" type="Node3D" parent="."]
-
 [node name="Trees" type="Node3D" parent="."]
-
 [node name="Hills" type="Node3D" parent="."]
-
 [node name="Cemetery" type="Node3D" parent="."]
-
 [node name="Props" type="Node3D" parent="."]
-
 [node name="BuildZone" type="Node3D" parent="."]
 
 [node name="Player" type="CharacterBody3D" parent="."]
-position = Vector3(0, 2.0, 6)
+position = Vector3(0, 0.26, 6)
 script = ExtResource("2_player")
 
 [node name="Collision" type="CollisionShape3D" parent="Player"]
