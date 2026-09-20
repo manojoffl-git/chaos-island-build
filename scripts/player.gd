@@ -33,25 +33,33 @@ func _ready() -> void:
 	body_visual = $CharacterVisual/Body
 	head_visual = $CharacterVisual/Head
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	# Mouse camera is handled globally so the mobile CameraTouch Control cannot block it.
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(-event.relative.x * mouse_sensitivity)
-		camera_pitch = clamp(camera_pitch - event.relative.y * mouse_sensitivity, -1.05, 0.18)
+		var motion: InputEventMouseMotion = event
+		rotate_y(-motion.relative.x * mouse_sensitivity)
+		camera_pitch = clamp(camera_pitch - motion.relative.y * mouse_sensitivity, -1.05, 0.18)
 		camera.rotation.x = camera_pitch
-	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	elif event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif event is InputEventMouseButton:
+		var mouse_button: InputEventMouseButton = event
+		if mouse_button.button_index == MOUSE_BUTTON_LEFT and mouse_button.pressed:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	elif event is InputEventKey:
+		var key_event: InputEventKey = event
+		if key_event.pressed and not key_event.echo and key_event.keycode == KEY_ESCAPE:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _physics_process(delta: float) -> void:
-	var keyboard_vector := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-	var input_vector := mobile_move if mobile_move.length() > 0.01 else keyboard_vector
-	var direction := Vector3(input_vector.x, 0.0, input_vector.y)
-	if direction.length() > 1.0: direction = direction.normalized()
-	var world_direction := global_transform.basis * direction
+	var keyboard_vector: Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var input_vector: Vector2 = mobile_move if mobile_move.length() > 0.01 else keyboard_vector
+	var direction: Vector3 = Vector3(input_vector.x, 0.0, input_vector.y)
+	if direction.length() > 1.0:
+		direction = direction.normalized()
+	var world_direction: Vector3 = global_transform.basis * direction
 	world_direction.y = 0.0
-	if world_direction.length() > 0.001: world_direction = world_direction.normalized()
-	var moving := world_direction.length() > 0.01
+	if world_direction.length() > 0.001:
+		world_direction = world_direction.normalized()
+	var moving: bool = world_direction.length() > 0.01
 	velocity.x = move_toward(velocity.x, world_direction.x * speed, speed * 8.0 * delta)
 	velocity.z = move_toward(velocity.z, world_direction.z * speed, speed * 8.0 * delta)
 	if not is_on_floor():
@@ -60,7 +68,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = jump_speed
 	if moving:
 		walk_time += delta * 9.0
-		var swing := sin(walk_time) * 0.55
+		var swing: float = sin(walk_time) * 0.55
 		left_arm.rotation.x = swing
 		right_arm.rotation.x = -swing
 		left_leg.rotation.x = -swing
@@ -75,7 +83,8 @@ func _physics_process(delta: float) -> void:
 		walk_time = 0.0
 	if Input.is_action_just_pressed("grab"):
 		mobile_grab()
-	if held != null: move_held_block()
+	if held != null:
+		move_held_block()
 	if Input.is_action_just_pressed("throw"):
 		mobile_throw()
 	_apply_mobile_camera(delta)
@@ -103,14 +112,14 @@ func mobile_throw() -> void:
 
 func grab_nearest_block() -> void:
 	var nearest: RigidBody3D = null
-	var nearest_distance := 4.0
-	var forward := -global_transform.basis.z
+	var nearest_distance: float = 4.0
+	var forward: Vector3 = -global_transform.basis.z
 	for node in get_tree().get_nodes_in_group("blocks"):
 		if node is RigidBody3D:
-			var block := node as RigidBody3D
-			var offset := block.global_position - global_position
-			var distance := offset.length()
-			var facing := forward.dot(offset.normalized()) if distance > 0.01 else 1.0
+			var block: RigidBody3D = node as RigidBody3D
+			var offset: Vector3 = block.global_position - global_position
+			var distance: float = offset.length()
+			var facing: float = forward.dot(offset.normalized()) if distance > 0.01 else 1.0
 			if distance < nearest_distance and facing > -0.35:
 				nearest = block
 				nearest_distance = distance
@@ -121,18 +130,24 @@ func grab_nearest_block() -> void:
 		move_held_block()
 
 func move_held_block() -> void:
-	if not is_instance_valid(held): held = null; return
+	if not is_instance_valid(held):
+		held = null
+		return
 	held.global_position = global_position + (-global_transform.basis.z * 2.0) + Vector3.UP * 1.25
 	held.global_rotation = Vector3.ZERO
 
 func release_block() -> void:
-	if not is_instance_valid(held): held = null; return
+	if not is_instance_valid(held):
+		held = null
+		return
 	held.freeze = false
 	held.sleeping = false
 	held = null
 
 func throw_block() -> void:
-	if not is_instance_valid(held): held = null; return
+	if not is_instance_valid(held):
+		held = null
+		return
 	move_held_block()
 	var block: RigidBody3D = held
 	held = null
