@@ -172,12 +172,16 @@ func _physics_process(delta: float) -> void:
         walk_time = 0.0
 
     # Tap E once to grab. Tap E again to drop. No holding required.
-    # R throws the currently held object.
+    # While held, the object follows the player every physics frame.
+    # R throws the held object from the player's current position.
     if Input.is_action_just_pressed("grab"):
         if held == null:
             grab_nearest_block()
         else:
             release_block()
+
+    if held != null:
+        move_held_block()
 
     if Input.is_action_just_pressed("throw") and held != null:
         throw_block()
@@ -207,6 +211,8 @@ func move_held_block() -> void:
     if not is_instance_valid(held):
         held = null
         return
+    # Recalculate the held position from the player's current transform,
+    # so it follows correctly while walking and turning.
     held.global_position = global_position + (-global_transform.basis.z * 2.0) + Vector3.UP * 1.25
     held.global_rotation = Vector3.ZERO
 
@@ -222,6 +228,8 @@ func throw_block() -> void:
     if not is_instance_valid(held):
         held = null
         return
+    # Make sure the object is at the player's current hand position before throwing.
+    move_held_block()
     var block: RigidBody3D = held
     held = null
     block.freeze = false
