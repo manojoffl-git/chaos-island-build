@@ -92,7 +92,6 @@ func build_character() -> void:
     visual_root.add_child(head_visual)
     add_sphere(head_visual, 0.68, Color("#f1bd4d"), Vector3.ZERO, "Head")
 
-    # Eyes + simple beak-like face.
     add_sphere(head_visual, 0.09, Color("#20252b"), Vector3(-0.23, 0.10, -0.60), "LeftEye")
     add_sphere(head_visual, 0.09, Color("#20252b"), Vector3(0.23, 0.10, -0.60), "RightEye")
     var beak: MeshInstance3D = add_sphere(head_visual, 0.16, Color("#d46f32"), Vector3(0, -0.08, -0.68), "Beak")
@@ -172,13 +171,13 @@ func _physics_process(delta: float) -> void:
         right_leg.rotation.x = lerp(right_leg.rotation.x, 0.0, delta * 8.0)
         walk_time = 0.0
 
-    if Input.is_action_pressed("grab"):
+    # Tap E once to grab. Tap E again to drop. No holding required.
+    # R throws the currently held object.
+    if Input.is_action_just_pressed("grab"):
         if held == null:
             grab_nearest_block()
         else:
-            move_held_block()
-    elif held != null:
-        release_block()
+            release_block()
 
     if Input.is_action_just_pressed("throw") and held != null:
         throw_block()
@@ -202,6 +201,7 @@ func grab_nearest_block() -> void:
         held = nearest
         held.freeze = true
         held.sleeping = true
+        move_held_block()
 
 func move_held_block() -> void:
     if not is_instance_valid(held):
