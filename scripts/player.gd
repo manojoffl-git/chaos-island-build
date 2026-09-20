@@ -13,12 +13,14 @@ var mobile_move: Vector2 = Vector2.ZERO
 var mobile_look: Vector2 = Vector2.ZERO
 var camera_pitch: float = -0.34
 var walk_time: float = 0.0
+var idle_time: float = 0.0
 var left_arm: Node3D
 var right_arm: Node3D
 var left_leg: Node3D
 var right_leg: Node3D
 var body_visual: Node3D
 var head_visual: Node3D
+var tail_rig: Node3D
 @onready var camera: Camera3D = $Camera
 
 func _ready() -> void:
@@ -31,7 +33,8 @@ func _ready() -> void:
 	left_leg = $CharacterVisual/LeftLeg
 	right_leg = $CharacterVisual/RightLeg
 	body_visual = $CharacterVisual/Body
-	head_visual = $CharacterVisual/Head
+	head_visual = $CharacterVisual/HeadRig
+	tail_rig = $CharacterVisual/TailRig
 
 func _input(event: InputEvent) -> void:
 	# Mouse camera is handled globally so the mobile CameraTouch Control cannot block it.
@@ -68,6 +71,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = jump_speed
 	if moving:
 		walk_time += delta * 9.0
+		idle_time = 0.0
 		var swing: float = sin(walk_time) * 0.55
 		left_arm.rotation.x = swing
 		right_arm.rotation.x = -swing
@@ -75,12 +79,12 @@ func _physics_process(delta: float) -> void:
 		right_leg.rotation.x = swing
 		body_visual.position.y = 1.25 + abs(sin(walk_time * 2.0)) * 0.035
 		head_visual.position.y = 2.45 + abs(sin(walk_time * 2.0)) * 0.045
+		head_visual.rotation = head_visual.rotation.lerp(Vector3.ZERO, delta * 8.0)
+		tail_rig.rotation.y = lerp(tail_rig.rotation.y, 0.0, delta * 8.0)
 	else:
-		left_arm.rotation.x = lerp(left_arm.rotation.x, 0.0, delta * 8.0)
-		right_arm.rotation.x = lerp(right_arm.rotation.x, 0.0, delta * 8.0)
-		left_leg.rotation.x = lerp(left_leg.rotation.x, 0.0, delta * 8.0)
-		right_leg.rotation.x = lerp(right_leg.rotation.x, 0.0, delta * 8.0)
 		walk_time = 0.0
+		idle_time += delta
+		_update_idle_animation(delta)
 	if Input.is_action_just_pressed("grab"):
 		mobile_grab()
 	if held != null:
@@ -89,6 +93,22 @@ func _physics_process(delta: float) -> void:
 		mobile_throw()
 	_apply_mobile_camera(delta)
 	move_and_slide()
+
+func _update_idle_animation(delta: float) -> void:
+	# Gentle breathing and tiny weight shifts keep the duck feeling alive while standing.
+	var breath: float = sin(idle_time * 2.2)
+	var sway: float = sin(idle_time * 1.35)
+	var slow_sway: float = sin(idle_time * 0.8)
+	body_visual.position.y = lerp(body_visual.position.y, 1.25 + breath * 0.025, delta * 5.0)
+	head_visual.position.y = lerp(head_visual.position.y, 2.45 + breath * 0.035, delta * 5.0)
+	left_arm.rotation.x = lerp(left_arm.rotation.x, 0.045 + sway * 0.035, delta * 5.0)
+	right_arm.rotation.x = lerp(right_arm.rotation.x, -0.045 - sway * 0.035, delta * 5.0)
+	left_leg.rotation.x = lerp(left_leg.rotation.x, -0.018 + slow_sway * 0.012, delta * 4.0)
+	right_leg.rotation.x = lerp(right_leg.rotation.x, 0.018 - slow_sway * 0.012, delta * 4.0)
+	head_visual.rotation.y = lerp(head_visual.rotation.y, sin(idle_time * 0.72) * 0.035, delta * 3.5)
+	head_visual.rotation.z = lerp(head_visual.rotation.z, sin(idle_time * 0.58) * 0.018, delta * 3.5)
+	tail_rig.rotation.y = lerp(tail_rig.rotation.y, sin(idle_time * 1.7) * 0.08, delta * 4.0)
+	tail_rig.rotation.x = lerp(tail_rig.rotation.x, deg_to_rad(-8.0) + sin(idle_time * 1.2) * 0.025, delta * 4.0)
 
 func _apply_mobile_camera(delta: float) -> void:
 	if mobile_look.length() > 0.01:
