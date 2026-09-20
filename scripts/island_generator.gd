@@ -96,7 +96,7 @@ func height_at(x: float, z: float) -> float:
     var hills: float = (broad * 0.5 + 0.5) * 5.2
     var rolling: float = detail * 1.15
     var ridge: float = max(0.0, broad - 0.18) * 2.8
-    var center_bias: float = (1.0 - clamp(length(Vector2(x, z)) / (HALF_WORLD * 0.82), 0.0, 1.0)) * 1.8
+    var center_bias: float = (1.0 - clamp(Vector2(x, z).length() / (HALF_WORLD * 0.82), 0.0, 1.0)) * 1.8
     var height: float = TERRAIN_BASE + hills * interior + rolling * interior + ridge * interior + center_bias * interior
     height *= smoothstep(0.0, 1.0, edge)
     return max(SEA_LEVEL - 0.04, height)
