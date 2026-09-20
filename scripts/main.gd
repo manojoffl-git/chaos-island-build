@@ -58,8 +58,8 @@ func mesh_sphere(radius: float, color: Color, parent: Node3D, pos: Vector3 = Vec
     return node
 
 func build_world() -> void:
-    # IslandGenerator exclusively owns terrain. The old prototype hills are removed
-    # so the procedural terrain controls the island shape completely.
+    # Terrain is generated exclusively by IslandGenerator.
+    # The old prototype hills are disabled so the procedural terrain owns the island shape.
     build_lake()
     build_trees()
     build_cemetery()
@@ -78,7 +78,6 @@ func build_lake() -> void:
         mesh_cylinder(0.12, 1.2, Color("#68452d"), lake, Vector3(6.0 + float(i) * 2.0, -0.1, -1.4), "DockPost")
 
 func build_hills() -> void:
-    # TerrainGenerator provides the only terrain hills now.
     pass
 
 func build_trees() -> void:
@@ -98,56 +97,142 @@ func build_tree(parent: Node3D, pos: Vector3, index: int) -> void:
     tree.name = "Tree_%02d" % index
     tree.position = pos
     parent.add_child(tree)
-    mesh_cylinder(0.28, 2.6, Color("#6b4a32"), tree, Vector3(0, 1.3, 0), "Trunk")
-    mesh_sphere(1.45, Color("#3f7d3d"), tree, Vector3(0, 3.0, 0), "Leaves")
+    mesh_cylinder(0.35, 3.2, Color("#6f472d"), tree, Vector3(0, 1.6, 0), "Trunk")
+    mesh_sphere(1.7, Color("#2f7f46"), tree, Vector3(0, 3.4, 0), "LeafBall")
+    mesh_sphere(1.15, Color("#3e9650"), tree, Vector3(0.9, 3.9, 0.1), "LeafBallSide")
+    mesh_sphere(1.05, Color("#3e9650"), tree, Vector3(-0.8, 3.8, -0.1), "LeafBallSide")
     var body: StaticBody3D = StaticBody3D.new()
-    body.name = "Collision"
+    body.name = "TreeCollision"
     tree.add_child(body)
     var col: CollisionShape3D = CollisionShape3D.new()
-    var shape: CylinderShape3D = CylinderShape3D.new()
-    shape.radius = 0.3
-    shape.height = 2.6
-    col.shape = shape
-    col.position = Vector3(0, 1.3, 0)
+    var capsule: CapsuleShape3D = CapsuleShape3D.new()
+    capsule.radius = 0.35
+    capsule.height = 3.2
+    col.shape = capsule
+    col.position = Vector3(0, 1.6, 0)
     body.add_child(col)
 
 func build_cemetery() -> void:
     var cemetery: Node3D = $Cemetery
-    for i in range(12):
-        var x: float = -8.0 + float(i % 4) * 4.0
-        var z: float = -2.0 + float(i / 4) * 4.0
-        mesh_box(Vector3(0.35, 1.6, 0.8), Color("#b6b0a4"), cemetery, Vector3(x, 0.8, z), "Grave_%02d" % i)
-    mesh_box(Vector3(22, 0.5, 0.25), Color("#6f573f"), cemetery, Vector3(-2, 0.25, -6), "FenceFront")
+    mesh_box(Vector3(11, 0.12, 8), Color("#4d8247"), cemetery, Vector3(-10, 0.17, -7), "CemeteryGround")
+    for row in range(3):
+        for col in range(4):
+            var x: float = -14.0 + float(col) * 2.5
+            var z: float = -9.5 + float(row) * 2.3
+            var grave: Node3D = Node3D.new()
+            grave.name = "Grave_%d_%d" % [row, col]
+            grave.position = Vector3(x, 0.25, z)
+            cemetery.add_child(grave)
+            mesh_box(Vector3(0.65, 1.1, 0.22), Color("#d9d9cf"), grave, Vector3(0, 0.55, 0), "Tombstone")
+            mesh_box(Vector3(0.75, 0.16, 0.18), Color("#d9d9cf"), grave, Vector3(0, 0.95, 0), "TombstoneTop")
+            mesh_box(Vector3(0.16, 0.8, 0.20), Color("#d9d9cf"), grave, Vector3(0, 0.58, 0), "Cross")
+            mesh_box(Vector3(0.7, 0.10, 1.1), Color("#4f3829"), grave, Vector3(0, 0.05, 0.9), "Dirt")
+    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(-10, 0.45, -11), "Fence")
+    mesh_box(Vector3(12, 0.25, 0.25), Color("#80572f"), cemetery, Vector3(-10, 0.45, -3), "Fence")
 
 func build_props() -> void:
     var props: Node3D = $Props
-    for i in range(10):
-        var body: RigidBody3D = RigidBody3D.new()
-        body.name = "PhysicsProp_%02d" % i
-        body.position = Vector3(-10.0 + float(i % 5) * 5.0, 1.0, 6.0 + float(i / 5) * 5.0)
-        props.add_child(body)
-        var shape: CollisionShape3D = CollisionShape3D.new()
-        var box: BoxShape3D = BoxShape3D.new()
-        box.size = Vector3(1.4, 1.4, 1.4)
-        shape.shape = box
-        body.add_child(shape)
-        mesh_box(Vector3(1.4, 1.4, 1.4), Color("#d28b45") if i % 2 == 0 else Color("#6f8f55"), body)
-        blocks.append(body)
-        world_objects.append(body)
+    for i in range(12):
+        var x: float = -8.0 + float((i * 7) % 17)
+        var z: float = 2.0 + float((i * 5) % 14)
+        var color: Color = [Color("#d9823b"), Color("#e6c44f"), Color("#4f9bd1"), Color("#b85d66")][i % 4]
+        make_physics_box(props, Vector3(x, 0.8, z), Vector3(1.5, 1.5, 1.5), color, "Crate_%02d" % i)
+    for i in range(5):
+        var barrel: RigidBody3D = make_physics_cylinder(props, Vector3(11.0 + float(i) * 1.5, 0.75, 3.0), 0.55, 1.5, Color("#b66a39"), "Barrel_%02d" % i)
+        barrel.rotation_degrees.z = 90.0
+    for p in [Vector3(3, 0.7, 5), Vector3(-4, 0.7, 5)]:
+        mesh_box(Vector3(3.0, 0.25, 0.5), Color("#8b5a32"), props, p, "BenchSeat")
+        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(-1.1, -0.4, 0), "BenchLeg")
+        mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(1.1, -0.4, 0), "BenchLeg")
+    mesh_cylinder(1.1, 0.18, Color("#5a5a5a"), props, Vector3(0, 0.25, 8), "FirePit")
+    mesh_sphere(0.45, Color("#ff9b32"), props, Vector3(0, 0.75, 8), "Fire")
+
+func make_physics_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color, object_name: String) -> RigidBody3D:
+    var body: RigidBody3D = RigidBody3D.new()
+    body.name = object_name
+    body.position = pos
+    body.mass = 1.2
+    body.linear_damp = 0.25
+    body.angular_damp = 0.4
+    body.add_to_group("blocks")
+    parent.add_child(body)
+    var mesh: MeshInstance3D = mesh_box(size, color, body, Vector3.ZERO, "Mesh")
+    mesh.material_override = mat(color)
+    var collision: CollisionShape3D = CollisionShape3D.new()
+    var shape: BoxShape3D = BoxShape3D.new()
+    shape.size = size
+    collision.shape = shape
+    body.add_child(collision)
+    blocks.append(body)
+    world_objects.append(body)
+    return body
+
+func make_physics_cylinder(parent: Node3D, pos: Vector3, radius: float, height: float, color: Color, object_name: String) -> RigidBody3D:
+    var body: RigidBody3D = RigidBody3D.new()
+    body.name = object_name
+    body.position = pos
+    body.mass = 1.5
+    body.linear_damp = 0.3
+    body.angular_damp = 0.45
+    body.add_to_group("blocks")
+    parent.add_child(body)
+    mesh_cylinder(radius, height, color, body, Vector3.ZERO, "Mesh")
+    var collision: CollisionShape3D = CollisionShape3D.new()
+    var shape: CylinderShape3D = CylinderShape3D.new()
+    shape.radius = radius
+    shape.height = height
+    collision.shape = shape
+    body.add_child(collision)
+    blocks.append(body)
+    world_objects.append(body)
+    return body
 
 func build_building_materials() -> void:
-    var build: Node3D = $BuildZone
-    for i in range(12):
-        var size: Vector3 = Vector3(2.0, 0.35, 0.8) if i % 2 == 0 else Vector3(0.8, 2.0, 0.8)
-        var body: RigidBody3D = RigidBody3D.new()
-        body.name = "Material_%02d" % i
-        body.position = Vector3(8.0 + float(i % 4) * 2.0, 1.0, 7.0 + float(i / 4) * 2.0)
-        build.add_child(body)
-        var shape: CollisionShape3D = CollisionShape3D.new()
-        var box: BoxShape3D = BoxShape3D.new()
-        box.size = size
-        shape.shape = box
-        body.add_child(shape)
-        mesh_box(size, Color("#9b6b3e"), body)
-        blocks.append(body)
-        world_objects.append(body)
+    var builds: Node3D = $BuildZone
+    for i in range(8):
+        var p: Vector3 = Vector3(-2.0 + float(i % 4) * 1.8, 0.65 + float(i / 4) * 1.2, -2.0)
+        var colors: Array[Color] = [Color("#a86b3f"), Color("#d9a441"), Color("#7b8791"), Color("#78a85b")]
+        make_physics_box(builds, p, Vector3(1.5, 1.0, 1.0), colors[i % colors.size()], "BuildMaterial_%02d" % i)
+
+func setup_ui() -> void:
+    status_label = $UI/Status
+    status_label.text = "CHAOS ISLAND 0.3\nExplore • Grab E • Throw R • Trigger disaster F\nBuild a shelter and survive the tsunami!"
+
+func _process(delta: float) -> void:
+    time_alive += delta
+    if status_label != null and not disaster_active:
+        status_label.text = "CHAOS ISLAND 0.3\nExplore the island • E grab • R throw • F tsunami\nLake • Cemetery • Trees • Build Zone"
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode == KEY_F:
+            tsunami()
+
+func tsunami() -> void:
+    if disaster_active:
+        return
+    disaster_active = true
+    status_label.text = "⚠ TSUNAMI! SURVIVE! ⚠"
+    var player: CharacterBody3D = $Player
+    player.velocity.y = 16.0
+    for block in blocks:
+        if is_instance_valid(block):
+            var offset: Vector3 = block.global_position - Vector3(0, 0, 0)
+            var distance: float = offset.length()
+            var direction: Vector3 = offset.normalized() if distance > 0.01 else Vector3.FORWARD
+            var impulse: Vector3 = direction * (24.0 / (distance + 1.0)) + Vector3.UP * 11.0
+            block.apply_central_impulse(impulse)
+    var wave: Node3D = Node3D.new()
+    wave.name = "TsunamiWave"
+    add_child(wave)
+    for side in range(4):
+        var w: MeshInstance3D
+        if side < 2:
+            w = mesh_box(Vector3(1.0, 3.0, 38.0), Color("#58b9e8"), wave, Vector3(-20.0 if side == 0 else 20.0, 1.5, 0), "Wave")
+        else:
+            w = mesh_box(Vector3(38.0, 3.0, 1.0), Color("#58b9e8"), wave, Vector3(0, 1.5, -20.0 if side == 2 else 20.0), "Wave")
+    var tween: Tween = create_tween()
+    tween.tween_property(wave, "scale", Vector3(0.45, 1.0, 0.45), 1.2)
+    tween.tween_callback(wave.queue_free)
+    await get_tree().create_timer(5.0).timeout
+    disaster_active = false
