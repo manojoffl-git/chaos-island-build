@@ -6,25 +6,18 @@ var world_objects: Array[RigidBody3D] = []
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var time_alive: float = 0.0
 var status_label: Label
-var island_generator: Node3D
 
 func _ready() -> void:
     rng.seed = 424242
     call_deferred("_initialize_world")
 
 func _initialize_world() -> void:
-    # Generate terrain and its collision before spawning physics objects.
-    # This prevents bodies from falling through the world during startup.
-    await get_tree().process_frame
-    island_generator = $IslandGenerator
-    island_generator.generate(self)
+    # The island is a permanent MeshInstance3D in Main.tscn.
+    # Nothing is generated at startup, so the terrain is always present.
     await get_tree().process_frame
 
-    # Put the player exactly on the generated terrain at the spawn point.
     var player: CharacterBody3D = $Player
-    var spawn_x: float = 0.0
-    var spawn_z: float = 6.0
-    player.global_position = Vector3(spawn_x, island_generator.height_at(spawn_x, spawn_z) + 0.08, spawn_z)
+    player.global_position = Vector3(0.0, terrain_height(0.0, 6.0) + 0.08, 6.0)
     player.velocity = Vector3.ZERO
 
     build_world()
@@ -75,13 +68,11 @@ func mesh_sphere(radius: float, color: Color, parent: Node3D, pos: Vector3 = Vec
     parent.add_child(node)
     return node
 
-func terrain_height(x: float, z: float) -> float:
-    if island_generator != null and island_generator.has_method("height_at"):
-        return island_generator.height_at(x, z)
-    return 0.0
+func terrain_height(_x: float, _z: float) -> float:
+    # The permanent island has a flat playable top at this height.
+    return 0.18
 
 func build_world() -> void:
-    # Terrain is generated first by IslandGenerator.
     build_lake()
     build_trees()
     build_cemetery()
@@ -89,6 +80,7 @@ func build_world() -> void:
     build_building_materials()
 
 func build_island() -> void:
+    # Island terrain is now a permanent MeshInstance3D in Main.tscn.
     pass
 
 func build_lake() -> void:
