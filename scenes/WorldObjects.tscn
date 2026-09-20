@@ -1,5 +1,8 @@
-[gd_scene load_steps=15 format=3]
-[sub_resource type="CylinderMesh" id="Trunk"]
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/assets/Tree_Stylized.tscn" id="1_tree"]
+
+[sub_resource type="CylinderMesh" id="Crate"]
 top_radius=0.35
 bottom_radius=0.35
 height=3.2
@@ -9,7 +12,7 @@ radius=1.7
 height=3.4
 radial_segments=12
 rings=6
-[sub_resource type="BoxMesh" id="Crate"]
+[sub_resource type="BoxMesh" id="CrateMesh"]
 size=Vector3(1.5,1.5,1.5)
 [sub_resource type="BoxShape3D" id="CrateCol"]
 size=Vector3(1.5,1.5,1.5)
@@ -43,66 +46,30 @@ albedo_color=Color(0.18,0.5,0.27,1)
 albedo_color=Color(0.43,0.28,0.18,1)
 [sub_resource type="StandardMaterial3D" id="Water"]
 albedo_color=Color(0.3,0.66,0.84,1)
+
 [node name="WorldObjects" type="Node3D"]
 [node name="Lake" type="MeshInstance3D" parent="."]
 mesh=SubResource("Lake")
 material_override=SubResource("Water")
 position=Vector3(8,0.3,-7)
 scale=Vector3(1.35,1,0.8)
+
 [node name="Trees" type="Node3D" parent="."]
-[node name="Tree01" type="StaticBody3D" parent="Trees"]
+[node name="Tree01" parent="Trees" instance=ExtResource("1_tree")]
 position=Vector3(-16,0.18,-4)
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree01"]
-mesh=SubResource("Trunk")
-material_override=SubResource("Brown")
-position=Vector3(0,1.6,0)
-[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree01"]
-mesh=SubResource("Leaves")
-material_override=SubResource("Green")
-position=Vector3(0,3.4,0)
-[node name="Collision" type="CollisionShape3D" parent="Trees/Tree01"]
-shape=SubResource("TreeCol")
-position=Vector3(0,1.6,0)
-[node name="Tree02" type="StaticBody3D" parent="Trees"]
+[node name="Tree02" parent="Trees" instance=ExtResource("1_tree")]
 position=Vector3(-14,0.18,-1)
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree02"]
-mesh=SubResource("Trunk")
-material_override=SubResource("Brown")
-position=Vector3(0,1.6,0)
-[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree02"]
-mesh=SubResource("Leaves")
-material_override=SubResource("Green")
-position=Vector3(0,3.4,0)
-[node name="Tree03" type="StaticBody3D" parent="Trees"]
+scale=Vector3(0.9,1.05,0.9)
+[node name="Tree03" parent="Trees" instance=ExtResource("1_tree")]
 position=Vector3(-12,0.18,7)
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree03"]
-mesh=SubResource("Trunk")
-material_override=SubResource("Brown")
-position=Vector3(0,1.6,0)
-[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree03"]
-mesh=SubResource("Leaves")
-material_override=SubResource("Green")
-position=Vector3(0,3.4,0)
-[node name="Tree04" type="StaticBody3D" parent="Trees"]
+scale=Vector3(1.08,0.92,1.08)
+[node name="Tree04" parent="Trees" instance=ExtResource("1_tree")]
 position=Vector3(14,0.18,15)
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree04"]
-mesh=SubResource("Trunk")
-material_override=SubResource("Brown")
-position=Vector3(0,1.6,0)
-[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree04"]
-mesh=SubResource("Leaves")
-material_override=SubResource("Green")
-position=Vector3(0,3.4,0)
-[node name="Tree05" type="StaticBody3D" parent="Trees"]
+scale=Vector3(0.92,1.12,0.92)
+[node name="Tree05" parent="Trees" instance=ExtResource("1_tree")]
 position=Vector3(18,0.18,12)
-[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree05"]
-mesh=SubResource("Trunk")
-material_override=SubResource("Brown")
-position=Vector3(0,1.6,0)
-[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree05"]
-mesh=SubResource("Leaves")
-material_override=SubResource("Green")
-position=Vector3(0,3.4,0)
+scale=Vector3(1.12,0.98,1.12)
+
 [node name="Cemetery" type="Node3D" parent="."]
 [node name="Grave01" type="MeshInstance3D" parent="Cemetery"]
 mesh=SubResource("Stone")
@@ -119,17 +86,18 @@ position=Vector3(3,1,5)
 [node name="Bench02" type="MeshInstance3D" parent="."]
 mesh=SubResource("Bench")
 position=Vector3(-4,1,5)
+
 [node name="Props" type="Node3D" parent="."]
 [node name="Crate01" type="RigidBody3D" parent="Props" groups=["blocks"]]
 position=Vector3(-8,0.99,2)
 [node name="Mesh" type="MeshInstance3D" parent="Props/Crate01"]
-mesh=SubResource("Crate")
+mesh=SubResource("CrateMesh")
 [node name="Collision" type="CollisionShape3D" parent="Props/Crate01"]
 shape=SubResource("CrateCol")
 [node name="Crate02" type="RigidBody3D" parent="Props" groups=["blocks"]]
 position=Vector3(-1,0.99,7)
 [node name="Mesh" type="MeshInstance3D" parent="Props/Crate02"]
-mesh=SubResource("Crate")
+mesh=SubResource("CrateMesh")
 [node name="Collision" type="CollisionShape3D" parent="Props/Crate02"]
 shape=SubResource("CrateCol")
 [node name="Barrel01" type="RigidBody3D" parent="Props" groups=["blocks"]]
@@ -139,6 +107,7 @@ rotation_degrees=Vector3(0,0,90)
 mesh=SubResource("Barrel")
 [node name="Collision" type="CollisionShape3D" parent="Props/Barrel01"]
 shape=SubResource("BarrelCol")
+
 [node name="BuildZone" type="Node3D" parent="."]
 [node name="Build01" type="RigidBody3D" parent="BuildZone" groups=["blocks"]]
 position=Vector3(-2,0.68,-2)
