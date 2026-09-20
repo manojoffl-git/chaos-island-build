@@ -58,7 +58,9 @@ func mesh_sphere(radius: float, color: Color, parent: Node3D, pos: Vector3 = Vec
     return node
 
 func build_world() -> void:
-    build_island()
+    # Terrain is generated exclusively by IslandGenerator.
+    # Keeping the old build_island() function below avoids breaking the prototype
+    # while preventing duplicate 44x44 terrain and collision.
     build_lake()
     build_trees()
     build_cemetery()
@@ -68,7 +70,6 @@ func build_world() -> void:
 
 func build_island() -> void:
     var island: Node3D = $Island
-    # Main body: box mesh, with smaller stepped boxes making a chunky irregular coastline.
     mesh_box(Vector3(44.0, 1.2, 44.0), Color("#5b9b55"), island, Vector3(0, -0.6, 0), "MainIsland")
     var edge_positions: Array[Vector3] = [
         Vector3(-19, 0.0, -18), Vector3(0, 0.0, -21), Vector3(19, 0.0, -18),
@@ -83,15 +84,12 @@ func build_island() -> void:
     shape.size = Vector3(44.0, 1.2, 44.0)
     collision.shape = shape
     collision.position = Vector3(0, -0.6, 0)
-
-    # Dirt layer for a little visual depth.
     mesh_box(Vector3(40.0, 0.35, 40.0), Color("#7d5a3b"), island, Vector3(0, 0.05, 0), "DirtLayer")
 
 func build_lake() -> void:
     var lake: Node3D = $Lake
     var water: MeshInstance3D = mesh_cylinder(5.5, 0.18, Color("#4ea9d6"), lake, Vector3(8.0, 0.22, -7.0), "LakeWater")
     water.scale = Vector3(1.35, 1.0, 0.8)
-    # Small dock.
     mesh_box(Vector3(5.0, 0.22, 1.2), Color("#9b6b3e"), lake, Vector3(8.0, 0.42, -1.4), "Dock")
     for i in range(3):
         var post: MeshInstance3D = mesh_cylinder(0.12, 1.2, Color("#68452d"), lake, Vector3(6.0 + float(i) * 2.0, -0.1, -1.4), "DockPost")
@@ -129,7 +127,6 @@ func build_tree(parent: Node3D, pos: Vector3, index: int) -> void:
     mesh_sphere(1.7, Color("#2f7f46"), tree, Vector3(0, 3.4, 0), "LeafBall")
     mesh_sphere(1.15, Color("#3e9650"), tree, Vector3(0.9, 3.9, 0.1), "LeafBallSide")
     mesh_sphere(1.05, Color("#3e9650"), tree, Vector3(-0.8, 3.8, -0.1), "LeafBallSide")
-    # A small collision trunk so the tree can affect movement.
     var body: StaticBody3D = StaticBody3D.new()
     body.name = "TreeCollision"
     tree.add_child(body)
@@ -161,24 +158,18 @@ func build_cemetery() -> void:
 
 func build_props() -> void:
     var props: Node3D = $Props
-    # Colored crates, barrels, rocks, benches and a little camp.
     for i in range(12):
         var x: float = -8.0 + float((i * 7) % 17)
         var z: float = 2.0 + float((i * 5) % 14)
         var color: Color = [Color("#d9823b"), Color("#e6c44f"), Color("#4f9bd1"), Color("#b85d66")][i % 4]
         make_physics_box(props, Vector3(x, 0.8, z), Vector3(1.5, 1.5, 1.5), color, "Crate_%02d" % i)
-
     for i in range(5):
         var barrel: RigidBody3D = make_physics_cylinder(props, Vector3(11.0 + float(i) * 1.5, 0.75, 3.0), 0.55, 1.5, Color("#b66a39"), "Barrel_%02d" % i)
         barrel.rotation_degrees.z = 90.0
-
-    # Benches.
     for p in [Vector3(3, 0.7, 5), Vector3(-4, 0.7, 5)]:
         mesh_box(Vector3(3.0, 0.25, 0.5), Color("#8b5a32"), props, p, "BenchSeat")
         mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(-1.1, -0.4, 0), "BenchLeg")
         mesh_box(Vector3(0.25, 0.8, 0.25), Color("#6c4327"), props, p + Vector3(1.1, -0.4, 0), "BenchLeg")
-
-    # Fire pit.
     mesh_cylinder(1.1, 0.18, Color("#5a5a5a"), props, Vector3(0, 0.25, 8), "FirePit")
     mesh_sphere(0.45, Color("#ff9b32"), props, Vector3(0, 0.75, 8), "Fire")
 
@@ -191,7 +182,6 @@ func make_physics_box(parent: Node3D, pos: Vector3, size: Vector3, color: Color,
     body.angular_damp = 0.4
     body.add_to_group("blocks")
     parent.add_child(body)
-
     var mesh: MeshInstance3D = mesh_box(size, color, body, Vector3.ZERO, "Mesh")
     mesh.material_override = mat(color)
     var collision: CollisionShape3D = CollisionShape3D.new()
@@ -225,7 +215,6 @@ func make_physics_cylinder(parent: Node3D, pos: Vector3, radius: float, height: 
 
 func build_building_materials() -> void:
     var builds: Node3D = $BuildZone
-    # A little starter pile with different materials.
     for i in range(8):
         var p: Vector3 = Vector3(-2.0 + float(i % 4) * 1.8, 0.65 + float(i / 4) * 1.2, -2.0)
         var colors: Array[Color] = [Color("#a86b3f"), Color("#d9a441"), Color("#7b8791"), Color("#78a85b")]
@@ -250,10 +239,8 @@ func tsunami() -> void:
         return
     disaster_active = true
     status_label.text = "⚠ TSUNAMI! SURVIVE! ⚠"
-
     var player: CharacterBody3D = $Player
     player.velocity.y = 16.0
-
     for block in blocks:
         if is_instance_valid(block):
             var offset: Vector3 = block.global_position - Vector3(0, 0, 0)
@@ -261,8 +248,6 @@ func tsunami() -> void:
             var direction: Vector3 = offset.normalized() if distance > 0.01 else Vector3.FORWARD
             var impulse: Vector3 = direction * (24.0 / (distance + 1.0)) + Vector3.UP * 11.0
             block.apply_central_impulse(impulse)
-
-    # Add a visible wave ring using simple boxes.
     var wave: Node3D = Node3D.new()
     wave.name = "TsunamiWave"
     add_child(wave)
@@ -275,6 +260,5 @@ func tsunami() -> void:
     var tween: Tween = create_tween()
     tween.tween_property(wave, "scale", Vector3(0.45, 1.0, 0.45), 1.2)
     tween.tween_callback(wave.queue_free)
-
     await get_tree().create_timer(5.0).timeout
     disaster_active = false
