@@ -6,9 +6,11 @@ extends CharacterBody3D
 @export var mouse_sensitivity: float = 0.0025
 @export var camera_distance: float = 8.5
 @export var camera_height: float = 4.0
+@export var mobile_look_sensitivity: float = 0.045
 
 var held: RigidBody3D = null
-var mobile_move := Vector2.ZERO
+var mobile_move: Vector2 = Vector2.ZERO
+var mobile_look: Vector2 = Vector2.ZERO
 var camera_pitch: float = -0.34
 var walk_time: float = 0.0
 var left_arm: Node3D
@@ -52,8 +54,10 @@ func _physics_process(delta: float) -> void:
 	var moving := world_direction.length() > 0.01
 	velocity.x = move_toward(velocity.x, world_direction.x * speed, speed * 8.0 * delta)
 	velocity.z = move_toward(velocity.z, world_direction.z * speed, speed * 8.0 * delta)
-	if not is_on_floor(): velocity.y -= gravity * delta
-	elif Input.is_action_just_pressed("jump"): velocity.y = jump_speed
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+	elif Input.is_action_just_pressed("jump"):
+		velocity.y = jump_speed
 	if moving:
 		walk_time += delta * 9.0
 		var swing := sin(walk_time) * 0.55
@@ -70,11 +74,32 @@ func _physics_process(delta: float) -> void:
 		right_leg.rotation.x = lerp(right_leg.rotation.x, 0.0, delta * 8.0)
 		walk_time = 0.0
 	if Input.is_action_just_pressed("grab"):
-		if held == null: grab_nearest_block()
-		else: release_block()
+		mobile_grab()
 	if held != null: move_held_block()
-	if Input.is_action_just_pressed("throw") and held != null: throw_block()
+	if Input.is_action_just_pressed("throw"):
+		mobile_throw()
+	_apply_mobile_camera(delta)
 	move_and_slide()
+
+func _apply_mobile_camera(delta: float) -> void:
+	if mobile_look.length() > 0.01:
+		rotate_y(-mobile_look.x * mobile_look_sensitivity * delta * 60.0)
+		camera_pitch = clamp(camera_pitch - mobile_look.y * mobile_look_sensitivity * delta * 60.0, -1.05, 0.18)
+		camera.rotation.x = camera_pitch
+
+func mobile_jump() -> void:
+	if is_on_floor():
+		velocity.y = jump_speed
+
+func mobile_grab() -> void:
+	if held == null:
+		grab_nearest_block()
+	else:
+		release_block()
+
+func mobile_throw() -> void:
+	if held != null:
+		throw_block()
 
 func grab_nearest_block() -> void:
 	var nearest: RigidBody3D = null
