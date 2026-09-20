@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id="1_main"]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id="2_player"]
 [ext_resource path="res://scenes/WorldObjects.tscn" type="PackedScene" id="3_world"]
+[ext_resource path="res://scenes/MobileControls.tscn" type="PackedScene" id="4_mobile"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 sky_top_color = Color(0.16, 0.28, 0.45, 1)
@@ -80,3 +81,4 @@ theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_font_sizes/font_size = 20
+[node name="MobileControls" parent="." instance=ExtResource("4_mobile")]
