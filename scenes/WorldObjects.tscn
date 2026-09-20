@@ -1,3 +1,97 @@
-[gd_scene format=3]
-
+[gd_scene load_steps=9 format=3]
+[sub_resource type="CylinderMesh" id="Trunk"]
+top_radius=0.35
+bottom_radius=0.35
+height=3.2
+radial_segments=12
+[sub_resource type="SphereMesh" id="Leaves"]
+radius=1.7
+height=3.4
+radial_segments=12
+rings=6
+[sub_resource type="BoxMesh" id="Crate"]
+size=Vector3(1.5,1.5,1.5)
+[sub_resource type="BoxShape3D" id="CrateCol"]
+size=Vector3(1.5,1.5,1.5)
+[sub_resource type="CylinderMesh" id="Barrel"]
+top_radius=0.55
+bottom_radius=0.55
+height=1.5
+radial_segments=12
+[sub_resource type="CylinderShape3D" id="BarrelCol"]
+radius=0.55
+height=1.5
+[sub_resource type="CapsuleShape3D" id="TreeCol"]
+radius=0.35
+height=3.2
+[sub_resource type="StandardMaterial3D" id="Green"]
+albedo_color=Color(0.18,0.5,0.27,1)
+[sub_resource type="StandardMaterial3D" id="Brown"]
+albedo_color=Color(0.43,0.28,0.18,1)
 [node name="WorldObjects" type="Node3D"]
+[node name="Trees" type="Node3D" parent="."]
+[node name="Tree01" type="StaticBody3D" parent="Trees"]
+position=Vector3(-16,0.18,-4)
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree01"]
+mesh=SubResource("Trunk")
+material_override=SubResource("Brown")
+position=Vector3(0,1.6,0)
+[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree01"]
+mesh=SubResource("Leaves")
+material_override=SubResource("Green")
+position=Vector3(0,3.4,0)
+[node name="Collision" type="CollisionShape3D" parent="Trees/Tree01"]
+shape=SubResource("TreeCol")
+position=Vector3(0,1.6,0)
+[node name="Tree02" type="StaticBody3D" parent="Trees"]
+position=Vector3(-14,0.18,-1)
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree02"]
+mesh=SubResource("Trunk")
+material_override=SubResource("Brown")
+position=Vector3(0,1.6,0)
+[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree02"]
+mesh=SubResource("Leaves")
+material_override=SubResource("Green")
+position=Vector3(0,3.4,0)
+[node name="Collision" type="CollisionShape3D" parent="Trees/Tree02"]
+shape=SubResource("TreeCol")
+position=Vector3(0,1.6,0)
+[node name="Tree03" type="StaticBody3D" parent="Trees"]
+position=Vector3(18,0.18,12)
+[node name="Trunk" type="MeshInstance3D" parent="Trees/Tree03"]
+mesh=SubResource("Trunk")
+material_override=SubResource("Brown")
+position=Vector3(0,1.6,0)
+[node name="Leaves" type="MeshInstance3D" parent="Trees/Tree03"]
+mesh=SubResource("Leaves")
+material_override=SubResource("Green")
+position=Vector3(0,3.4,0)
+[node name="Collision" type="CollisionShape3D" parent="Trees/Tree03"]
+shape=SubResource("TreeCol")
+position=Vector3(0,1.6,0)
+[node name="Props" type="Node3D" parent="."]
+[node name="Crate01" type="RigidBody3D" parent="Props" groups=["blocks"]]
+position=Vector3(-8,0.99,2)
+[node name="Mesh" type="MeshInstance3D" parent="Props/Crate01"]
+mesh=SubResource("Crate")
+[node name="Collision" type="CollisionShape3D" parent="Props/Crate01"]
+shape=SubResource("CrateCol")
+[node name="Crate02" type="RigidBody3D" parent="Props" groups=["blocks"]]
+position=Vector3(-1,0.99,7)
+[node name="Mesh" type="MeshInstance3D" parent="Props/Crate02"]
+mesh=SubResource("Crate")
+[node name="Collision" type="CollisionShape3D" parent="Props/Crate02"]
+shape=SubResource("CrateCol")
+[node name="Crate03" type="RigidBody3D" parent="Props" groups=["blocks"]]
+position=Vector3(6,0.99,12)
+[node name="Mesh" type="MeshInstance3D" parent="Props/Crate03"]
+mesh=SubResource("Crate")
+[node name="Collision" type="CollisionShape3D" parent="Props/Crate03"]
+shape=SubResource("CrateCol")
+[node name="Barrel01" type="RigidBody3D" parent="Props" groups=["blocks"]]
+position=Vector3(11,0.99,3)
+rotation_degrees=Vector3(0,0,90)
+[node name="Mesh" type="MeshInstance3D" parent="Props/Barrel01"]
+mesh=SubResource("Barrel")
+[node name="Collision" type="CollisionShape3D" parent="Props/Barrel01"]
+shape=SubResource("BarrelCol")
