@@ -74,3 +74,4 @@ graphics/environment/defaults/default_clear_color=Color(0.45, 0.72, 0.95, 1)
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

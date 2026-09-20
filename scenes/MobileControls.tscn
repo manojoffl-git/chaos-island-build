@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://bs3rbp0yavbme"]
 
-[ext_resource type="Script" path="res://scripts/mobile_controls.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/mobile_joystick.gd" id="2"]
+[ext_resource type="Script" uid="uid://bboy5rvmp6x0r" path="res://scripts/mobile_controls.gd" id="1"]
+[ext_resource type="Script" uid="uid://dwby32kguxedh" path="res://scripts/mobile_joystick.gd" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="ButtonStyle"]
 bg_color = Color(0.06, 0.08, 0.1, 0.78)
@@ -15,23 +15,22 @@ corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 
-[node name="MobileControls" type="CanvasLayer"]
+[node name="MobileControls" type="CanvasLayer" unique_id=402808706]
 script = ExtResource("1")
 
-[node name="MoveJoystick" type="Control" parent="."]
-anchors_preset = 1
+[node name="MoveJoystick" type="Control" parent="." unique_id=566296917]
+layout_mode = 3
+anchors_preset = 2
 anchor_top = 1.0
-anchor_right = 0.0
 anchor_bottom = 1.0
 offset_left = 36.0
 offset_top = -256.0
 offset_right = 256.0
 offset_bottom = -36.0
 script = ExtResource("2")
-radius = 92.0
-knob_radius = 38.0
 
-[node name="LookJoystick" type="Control" parent="."]
+[node name="LookJoystick" type="Control" parent="." unique_id=1129597681]
+layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -42,64 +41,78 @@ offset_top = -256.0
 offset_right = -36.0
 offset_bottom = -36.0
 script = ExtResource("2")
-radius = 92.0
-knob_radius = 38.0
 
-[node name="Actions" type="Control" parent="."]
+[node name="Actions" type="Control" parent="." unique_id=94950940]
 layout_mode = 3
 anchors_preset = 0
 
-[node name="Jump" type="Button" parent="Actions"]
+[node name="Jump" type="Button" parent="Actions" unique_id=500596857]
+layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -175.0
-offset_top = -370.0
-offset_right = -30.0
-offset_bottom = -300.0
+offset_left = 1024.0
+offset_top = 482.0
+offset_right = 1169.0
+offset_bottom = 552.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("ButtonStyle")
 text = "JUMP"
 
-[node name="Grab" type="Button" parent="Actions"]
+[node name="Grab" type="Button" parent="Actions" unique_id=2145573433]
+layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -380.0
-offset_top = -205.0
-offset_right = -265.0
-offset_bottom = -135.0
+offset_left = 1032.0
+offset_top = 326.0
+offset_right = 1151.0
+offset_bottom = 396.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("ButtonStyle")
 text = "GRAB / DROP"
 
-[node name="Throw" type="Button" parent="Actions"]
+[node name="Throw" type="Button" parent="Actions" unique_id=891415757]
+layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -380.0
-offset_top = -120.0
-offset_right = -265.0
-offset_bottom = -50.0
+offset_left = 856.0
+offset_top = 327.0
+offset_right = 971.0
+offset_bottom = 397.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("ButtonStyle")
 text = "THROW"
 
-[node name="Disaster" type="Button" parent="Actions"]
+[node name="Disaster" type="Button" parent="Actions" unique_id=1336202856]
+layout_mode = 1
+anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -175.0
-offset_top = -455.0
-offset_right = -30.0
-offset_bottom = -385.0
+offset_left = 51.0
+offset_top = 30.0
+offset_right = 196.0
+offset_bottom = 100.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_color = Color(1, 0.75, 0.2, 1)
 theme_override_font_sizes/font_size = 18
 theme_override_styles/normal = SubResource("ButtonStyle")
