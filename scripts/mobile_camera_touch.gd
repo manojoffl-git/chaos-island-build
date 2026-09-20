@@ -21,7 +21,7 @@ func _gui_input(event: InputEvent) -> void:
 			look_changed.emit(Vector2.ZERO)
 			accept_event()
 	elif event is InputEventScreenDrag and event.index == touch_id:
-		var delta := event.position - last_position
+		var delta: Vector2 = event.position - last_position
 		last_position = event.position
 		look_changed.emit(delta)
 		accept_event()
