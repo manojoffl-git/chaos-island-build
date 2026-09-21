@@ -6,7 +6,7 @@ varying float terrain_height;
 
 float island_radius(vec2 p) {
     float a = atan(p.y, p.x);
-    return 430.0 + 45.0 * sin(2.0 * a + 0.4) + 28.0 * sin(5.0 * a - 1.1) + 18.0 * sin(9.0 * a + 0.7);
+    return 410.0 + 28.0 * sin(2.0 * a + 0.4) + 18.0 * sin(5.0 * a - 1.1) + 10.0 * sin(9.0 * a + 0.7);
 }
 
 float terrain_height_at(vec2 p) {
@@ -38,10 +38,8 @@ float terrain_height_at(vec2 p) {
     float path = 1.0 - smoothstep(6.0, 16.0, best);
     h -= path * 2.8;
 
-    // Small walkable summit plateau.
     if (rr < 24.0) h = max(h, 102.0);
 
-    // Pull the coastline smoothly down to sea level.
     if (r > boundary - 12.0)
         h *= max(0.0, (boundary - r) / 12.0);
 
