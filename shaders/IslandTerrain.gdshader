@@ -6,29 +6,45 @@ varying float terrain_height;
 
 float island_radius(vec2 p) {
     float a = atan(p.y, p.x);
-    return 455.0 + 42.0 * sin(2.0 * a + 0.5) + 24.0 * sin(5.0 * a - 1.1) + 15.0 * sin(9.0 * a + 0.8);
+    return 430.0 + 45.0 * sin(2.0 * a + 0.4) + 28.0 * sin(5.0 * a - 1.1) + 18.0 * sin(9.0 * a + 0.7);
 }
 
 float terrain_height_at(vec2 p) {
-    vec2 q = vec2(p.x / 1.03, p.y / 0.94);
+    vec2 q = vec2(p.x / 1.03, p.y / 0.92);
     float r = length(q);
     float boundary = island_radius(p);
-    if (r > boundary) return -12.0;
+    if (r > boundary) return -18.0;
 
-    float edge = clamp((r - (boundary - 90.0)) / 90.0, 0.0, 1.0);
-    float h = 2.4 * sin(p.x / 72.0) + 1.8 * sin(p.y / 79.0) + 1.0 * sin((p.x + p.y) / 61.0);
-    h += 125.0 * exp(-pow((p.x - 175.0) / 175.0, 2.0) - pow((p.y + 175.0) / 155.0, 2.0));
-    h += 22.0 * exp(-pow((p.x + 180.0) / 150.0, 2.0) - pow((p.y - 100.0) / 170.0, 2.0));
-    h += 16.0 * exp(-pow((p.x - 260.0) / 120.0, 2.0) - pow((p.y - 60.0) / 130.0, 2.0));
-    h *= 1.0 - edge * 0.84;
+    float edge = clamp((r - (boundary - 75.0)) / 75.0, 0.0, 1.0);
+    float h = 1.6 * sin(p.x / 65.0) + 1.2 * sin(p.y / 78.0);
+    h += 0.8 * sin((p.x + p.y) / 52.0) + 0.5 * sin((p.x - p.y) / 31.0);
 
-    vec2 d = p - vec2(175.0, -175.0);
+    // Main asymmetric mountain.
+    h += 112.0 * exp(-pow((p.x - 150.0) / 190.0, 2.0) - pow((p.y + 120.0) / 165.0, 2.0));
+    // Smaller secondary rise for an uneven island silhouette.
+    h += 14.0 * exp(-pow((p.x + 210.0) / 150.0, 2.0) - pow((p.y - 170.0) / 120.0, 2.0));
+    h *= 1.0 - edge * 0.78;
+
+    // Winding climbable path from the lowlands toward the summit.
+    vec2 d = p - vec2(150.0, -120.0);
     float rr = length(d);
     float aa = atan(d.y, d.x);
     if (aa < 0.0) aa += 6.2831853;
-    float spiral_r = 55.0 + 15.0 * aa;
-    float path = 1.0 - smoothstep(12.0, 22.0, abs(rr - spiral_r));
-    h -= path * 7.0;
+    float best = 999.0;
+    for (int k = -1; k <= 4; k++) {
+        float t = aa + 6.2831853 * float(k);
+        best = min(best, abs(rr - (35.0 + 13.0 * t)));
+    }
+    float path = 1.0 - smoothstep(6.0, 16.0, best);
+    h -= path * 2.8;
+
+    // Small walkable summit plateau.
+    if (rr < 24.0) h = max(h, 102.0);
+
+    // Pull the coastline smoothly down to sea level.
+    if (r > boundary - 12.0)
+        h *= max(0.0, (boundary - r) / 12.0);
+
     return h;
 }
 
@@ -41,19 +57,24 @@ void vertex() {
 void fragment() {
     vec2 p = world_pos.xz;
     float boundary = island_radius(p);
-    float radial = length(vec2(p.x / 1.03, p.y / 0.94));
-    if (radial > boundary + 2.0) discard;
+    float radial = length(vec2(p.x / 1.03, p.y / 0.92));
+    if (radial > boundary + 1.5) discard;
 
-    float patch = sin(p.x / 37.0) * sin(p.y / 43.0) + 0.55 * sin((p.x - p.y) / 29.0) + 0.35 * sin((p.x + p.y) / 17.0);
-    vec2 d = p - vec2(175.0, -175.0);
+    float patch = sin(p.x / 43.0) * sin(p.y / 49.0) + sin((p.x + p.y) / 41.0);
+
+    vec2 d = p - vec2(150.0, -120.0);
     float rr = length(d);
     float aa = atan(d.y, d.x);
     if (aa < 0.0) aa += 6.2831853;
-    float spiral_r = 55.0 + 15.0 * aa;
-    float path = 1.0 - smoothstep(12.0, 22.0, abs(rr - spiral_r));
-    float shore = 1.0 - smoothstep(-1.0, 6.0, terrain_height);
-    float soil = smoothstep(42.0, 70.0, terrain_height) * smoothstep(0.25, 0.55, patch);
-    float light = smoothstep(0.60, 0.95, patch) * (1.0 - soil);
+    float best = 999.0;
+    for (int k = -1; k <= 4; k++) {
+        float t = aa + 6.2831853 * float(k);
+        best = min(best, abs(rr - (35.0 + 13.0 * t)));
+    }
+    float path = 1.0 - smoothstep(6.0, 16.0, best);
+    float shore = 1.0 - smoothstep(-0.5, 5.0, terrain_height);
+    float soil = smoothstep(18.0, 45.0, terrain_height) * smoothstep(0.05, 0.75, patch);
+    float light = smoothstep(0.55, 0.95, patch) * (1.0 - soil);
 
     vec3 deep_green = vec3(0.055, 0.25, 0.055);
     vec3 light_green = vec3(0.30, 0.62, 0.12);
@@ -64,6 +85,7 @@ void fragment() {
     base = mix(base, light_green, light);
     base = mix(base, soil_color, soil);
     base = mix(base, sand, max(shore, path));
+
     ALBEDO = base;
     ROUGHNESS = 0.96;
 }
