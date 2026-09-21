@@ -29,7 +29,7 @@ func _ensure_terrain() -> void:
 func _height(x: float, z: float) -> float:
 	var a := atan2(z, x)
 	var boundary := island_radius + 140.0 * sin(2.0 * a + 0.4) + 90.0 * sin(5.0 * a - 1.1) + 50.0 * sin(9.0 * a + 0.7)
-	var r := length(Vector2(x / 1.03, z / 0.92))
+	var r := Vector2(x / 1.03, z / 0.92).length()
 	if r > boundary:
 		return -100.0
 
@@ -101,7 +101,7 @@ func _build_terrain() -> void:
 			var p01 := Vector3(x0, heights[(z_i + 1) * n + x_i], z1)
 
 			var center := Vector2((x0 + x1) * 0.5, (z0 + z1) * 0.5)
-			if length(Vector2(center.x / 1.03, center.y / 0.92)) > island_radius + 160.0:
+			if Vector2(center.x / 1.03, center.y / 0.92).length() > island_radius + 160.0:
 				continue
 
 			_add_triangle(st, p00, p10, p11)
