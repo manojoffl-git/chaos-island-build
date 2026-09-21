@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://scenes/WorldObjects.tscn" id="3_world"]
 [ext_resource type="PackedScene" uid="uid://bs3rbp0yavbme" path="res://scenes/MobileControls.tscn" id="4_mobile"]
-[ext_resource type="Shader" uid="uid://cmjo4x400dws4" path="res://shaders/IslandTerrain.gdshader" id="5_terrain"]
+[ext_resource type="Script" path="res://scripts/island_terrain_builder.gd" id="5_terrain"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 sky_top_color = Color(0.16, 0.28, 0.45, 1)
@@ -25,20 +25,6 @@ ambient_light_color = Color(0.62, 0.69, 0.76, 1)
 ambient_light_energy = 0.42
 tonemap_mode = 2
 
-[sub_resource type="ShaderMaterial" id="IslandMaterial"]
-render_priority = 0
-shader = ExtResource("5_terrain")
-
-[sub_resource type="PlaneMesh" id="IslandMesh"]
-size = Vector2(960, 960)
-subdivide_width = 64
-subdivide_depth = 64
-
-[sub_resource type="HeightMapShape3D" id="IslandCollisionShape"]
-map_width = 17
-map_depth = 17
-map_data = PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-
 [sub_resource type="StandardMaterial3D" id="OceanMaterial"]
 transparency = 1
 cull_mode = 2
@@ -47,7 +33,7 @@ metallic = 0.03
 roughness = 0.2
 
 [sub_resource type="QuadMesh" id="OceanMesh"]
-size = Vector2(1400, 1400)
+size = Vector2(5200, 5200)
 
 [node name="ChaosIsland" type="Node3D" unique_id=1831867644]
 script = ExtResource("1_main")
@@ -60,16 +46,12 @@ transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81
 light_energy = 0.72
 shadow_enabled = true
 
-[node name="Island" type="MeshInstance3D" parent="." unique_id=432944200]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.829834, 0)
-material_override = SubResource("IslandMaterial")
-mesh = SubResource("IslandMesh")
-
-[node name="IslandCollision" type="StaticBody3D" parent="." unique_id=1777706022]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="IslandCollision" unique_id=139949539]
-transform = Transform3D(60, 0, 0, 0, 1, 0, 0, 0, 60, 0, 0, 0)
-shape = SubResource("IslandCollisionShape")
+[node name="TerrainBuilder" type="Node3D" parent="." unique_id=432944200]
+script = ExtResource("5_terrain")
+grid_size = 97
+world_size = 4800.0
+island_radius = 2050.0
+mountain_height = 560.0
 
 [node name="Ocean" type="MeshInstance3D" parent="." unique_id=901452159]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, -0.05, 0)
