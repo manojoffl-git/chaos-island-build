@@ -1,18 +1,80 @@
-[gd_scene load_steps=3 format=3]
-[sub_resource type="BoxMesh" id="WaveX"]
-size=Vector3(1,3,38)
-[sub_resource type="BoxMesh" id="WaveZ"]
-size=Vector3(38,3,1)
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/tsunami_wave.gd" id="1_tsunami"]
+
+[sub_resource type="StandardMaterial3D" id="DeepWaterMat"]
+diffuse_mode = 2
+cull_mode = 0
+albedo_color = Color(0.08, 0.42, 0.78, 1)
+roughness = 0.12
+metallic = 0.05
+
+[sub_resource type="StandardMaterial3D" id="MidWaterMat"]
+diffuse_mode = 2
+cull_mode = 0
+albedo_color = Color(0.14, 0.55, 0.85, 1)
+roughness = 0.18
+metallic = 0.05
+
+[sub_resource type="StandardMaterial3D" id="FoamMat"]
+diffuse_mode = 2
+cull_mode = 0
+albedo_color = Color(0.95, 0.98, 1, 1)
+roughness = 0.6
+
+[sub_resource type="BoxMesh" id="WaveBodyMesh"]
+size = Vector3(540, 38, 42)
+
+[sub_resource type="PrismMesh" id="WaveCrestMesh"]
+size = Vector3(544, 16, 32)
+
+[sub_resource type="CylinderMesh" id="FoamRollMesh"]
+top_radius = 6.0
+bottom_radius = 6.0
+height = 546
+radial_segments = 14
+
+[sub_resource type="BoxMesh" id="SurgeRampMesh"]
+size = Vector3(540, 24, 70)
+
+[sub_resource type="BoxMesh" id="FrontSurgeMesh"]
+size = Vector3(542, 7, 36)
+
+[sub_resource type="CylinderMesh" id="FrontFoamRollMesh"]
+top_radius = 4.5
+bottom_radius = 4.5
+height = 544
+radial_segments = 12
+
 [node name="TsunamiWave" type="Node3D"]
-[node name="West" type="MeshInstance3D" parent="."]
-mesh=SubResource("WaveX")
-position=Vector3(-20,1.5,0)
-[node name="East" type="MeshInstance3D" parent="."]
-mesh=SubResource("WaveX")
-position=Vector3(20,1.5,0)
-[node name="North" type="MeshInstance3D" parent="."]
-mesh=SubResource("WaveZ")
-position=Vector3(0,1.5,-20)
-[node name="South" type="MeshInstance3D" parent="."]
-mesh=SubResource("WaveZ")
-position=Vector3(0,1.5,20)
+script = ExtResource("1_tsunami")
+
+[node name="WaveBody" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 17, 0)
+material_override = SubResource("DeepWaterMat")
+mesh = SubResource("WaveBodyMesh")
+
+[node name="SurgeRamp" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 11, -45)
+material_override = SubResource("MidWaterMat")
+mesh = SubResource("SurgeRampMesh")
+
+[node name="WaveCrest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.939693, -0.34202, 0, 0.34202, 0.939693, 0, 36, 12)
+material_override = SubResource("FoamMat")
+mesh = SubResource("WaveCrestMesh")
+
+[node name="FoamRoll" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 37, 16)
+material_override = SubResource("FoamMat")
+mesh = SubResource("FoamRollMesh")
+
+[node name="FrontSurge" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 30)
+material_override = SubResource("MidWaterMat")
+mesh = SubResource("FrontSurgeMesh")
+
+[node name="FrontFoam" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 3.5, 45)
+material_override = SubResource("FoamMat")
+mesh = SubResource("FrontFoamRollMesh")

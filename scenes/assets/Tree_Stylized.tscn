@@ -1,151 +1,232 @@
-[gd_scene load_steps=15 format=3]
+[gd_scene format=3 uid="uid://dnehmswulm2vq"]
 
-[sub_resource type="CylinderMesh" id="TrunkMesh"]
-top_radius = 0.24
-bottom_radius = 0.48
-height = 4.8
-radial_segments = 8
-rings = 3
-
-[sub_resource type="CylinderMesh" id="RootMesh"]
-top_radius = 0.30
-bottom_radius = 0.72
-height = 0.9
-radial_segments = 8
-rings = 2
-
-[sub_resource type="CylinderMesh" id="BranchMesh"]
-top_radius = 0.10
-bottom_radius = 0.18
-height = 2.0
-radial_segments = 7
-rings = 2
-
-[sub_resource type="SphereMesh" id="LeafLarge"]
-radius = 1.65
-height = 2.9
-radial_segments = 8
-rings = 5
-
-[sub_resource type="SphereMesh" id="LeafMedium"]
-radius = 1.25
-height = 2.25
-radial_segments = 8
-rings = 5
-
-[sub_resource type="SphereMesh" id="LeafSmall"]
-radius = 0.95
-height = 1.75
-radial_segments = 8
-rings = 5
-
-[sub_resource type="StandardMaterial3D" id="TrunkMat"]
-albedo_color = Color(0.31, 0.17, 0.085, 1)
+[sub_resource type="StandardMaterial3D" id="BaseGrassMat"]
+diffuse_mode = 2
+albedo_color = Color(0.27, 0.68, 0.2, 1)
 roughness = 0.92
 
-[sub_resource type="StandardMaterial3D" id="RootMat"]
-albedo_color = Color(0.38, 0.21, 0.10, 1)
-roughness = 0.95
+[sub_resource type="CylinderMesh" id="MoundMesh"]
+top_radius = 1.35
+bottom_radius = 1.75
+height = 0.32
+radial_segments = 8
+rings = 1
+
+[sub_resource type="PrismMesh" id="TuftMesh"]
+size = Vector3(0.22, 0.38, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="WoodMat"]
+diffuse_mode = 2
+albedo_color = Color(0.38, 0.22, 0.12, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="RootMesh"]
+top_radius = 0.36
+bottom_radius = 0.88
+height = 1.2
+radial_segments = 7
+rings = 1
+
+[sub_resource type="CylinderMesh" id="TrunkMesh"]
+top_radius = 0.28
+bottom_radius = 0.38
+height = 2.6
+radial_segments = 7
+rings = 1
 
 [sub_resource type="StandardMaterial3D" id="BranchMat"]
-albedo_color = Color(0.27, 0.135, 0.065, 1)
-roughness = 0.93
+diffuse_mode = 2
+albedo_color = Color(0.32, 0.18, 0.1, 1)
+roughness = 0.92
 
-[sub_resource type="StandardMaterial3D" id="LeafDarkMat"]
-albedo_color = Color(0.075, 0.32, 0.12, 1)
-roughness = 0.88
+[sub_resource type="CylinderMesh" id="BranchThick"]
+top_radius = 0.12
+bottom_radius = 0.22
+height = 1.6
+radial_segments = 6
+rings = 1
 
-[sub_resource type="StandardMaterial3D" id="LeafMat"]
-albedo_color = Color(0.16, 0.52, 0.17, 1)
+[sub_resource type="CylinderMesh" id="BranchThin"]
+top_radius = 0.08
+bottom_radius = 0.16
+height = 1.3
+radial_segments = 5
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="LeafHighlightMat"]
+diffuse_mode = 2
+albedo_color = Color(0.38, 0.84, 0.26, 1)
 roughness = 0.84
 
-[sub_resource type="StandardMaterial3D" id="LeafLightMat"]
-albedo_color = Color(0.29, 0.68, 0.20, 1)
-roughness = 0.82
+[sub_resource type="SphereMesh" id="PolyHuge"]
+radius = 1.45
+height = 2.45
+radial_segments = 6
+rings = 3
 
-[sub_resource type="CapsuleShape3D" id="TreeCollision"]
-radius = 0.48
-height = 4.8
+[sub_resource type="StandardMaterial3D" id="LeafMainMat"]
+diffuse_mode = 2
+albedo_color = Color(0.28, 0.75, 0.21, 1)
+roughness = 0.86
 
-[node name="StylizedTree" type="StaticBody3D"]
+[sub_resource type="SphereMesh" id="PolyLarge"]
+radius = 1.22
+height = 2.15
+radial_segments = 6
+rings = 3
 
-[node name="RootFlare" type="MeshInstance3D" parent="."]
+[sub_resource type="StandardMaterial3D" id="LeafDarkMat"]
+diffuse_mode = 2
+albedo_color = Color(0.2, 0.6, 0.15, 1)
+roughness = 0.88
+
+[sub_resource type="SphereMesh" id="PolyMedium"]
+radius = 0.95
+height = 1.75
+radial_segments = 5
+rings = 3
+
+[sub_resource type="SphereMesh" id="PolySmall"]
+radius = 0.62
+height = 1.15
+radial_segments = 5
+rings = 2
+
+[sub_resource type="SphereMesh" id="PolyTiny"]
+radius = 0.42
+height = 0.78
+radial_segments = 5
+rings = 2
+
+[sub_resource type="CylinderShape3D" id="TrunkCollision"]
+height = 3.6
+radius = 0.55
+
+[sub_resource type="SphereShape3D" id="CanopyCollision"]
+radius = 2.2
+
+[node name="StylizedTree" type="StaticBody3D" unique_id=598103082]
+
+[node name="GrassMound" type="MeshInstance3D" parent="." unique_id=236710735]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 0)
+material_override = SubResource("BaseGrassMat")
+mesh = SubResource("MoundMesh")
+
+[node name="Tuft01" type="MeshInstance3D" parent="GrassMound" unique_id=1064609781]
+transform = Transform3D(0.939693, -0.34202, 0, 0.34202, 0.939693, 0, 0, 0, 1, -0.65, 0.22, 0.52)
+material_override = SubResource("BaseGrassMat")
+mesh = SubResource("TuftMesh")
+
+[node name="Tuft02" type="MeshInstance3D" parent="GrassMound" unique_id=891567454]
+transform = Transform3D(0.866025, 0.5, 0, -0.5, 0.866025, 0, 0, 0, 1, 0.72, 0.22, 0.38)
+material_override = SubResource("BaseGrassMat")
+mesh = SubResource("TuftMesh")
+
+[node name="Tuft03" type="MeshInstance3D" parent="GrassMound" unique_id=802295122]
+transform = Transform3D(1, 0, 0, 0, 0.906308, -0.422618, 0, 0.422618, 0.906308, 0.12, 0.22, -0.75)
+material_override = SubResource("BaseGrassMat")
+mesh = SubResource("TuftMesh")
+
+[node name="RootBase" type="MeshInstance3D" parent="." unique_id=2030556637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+material_override = SubResource("WoodMat")
 mesh = SubResource("RootMesh")
-material_override = SubResource("RootMat")
-position = Vector3(0, 0.45, 0)
 
-[node name="Trunk" type="MeshInstance3D" parent="."]
+[node name="Trunk" type="MeshInstance3D" parent="." unique_id=1043304651]
+transform = Transform3D(0.99863, 0, -0.052336, 0, 1, 0, 0.052336, 0, 0.99863, -0.04, 2.25, 0)
+material_override = SubResource("WoodMat")
 mesh = SubResource("TrunkMesh")
-material_override = SubResource("TrunkMat")
-position = Vector3(0, 2.7, 0)
-rotation_degrees = Vector3(0, 0, -2)
 
-[node name="BranchLeft" type="MeshInstance3D" parent="."]
-mesh = SubResource("BranchMesh")
+[node name="Branches" type="Node3D" parent="." unique_id=1479610550]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+
+[node name="BranchLeftMain" type="MeshInstance3D" parent="Branches" unique_id=1084670030]
+transform = Transform3D(0.7783023, -0.6264493, -0.04574249, 0.6163323, 0.77623683, -0.13286364, 0.12019938, 0.07518701, 0.9899407, -0.58, 0.5799999, 0.12)
 material_override = SubResource("BranchMat")
-position = Vector3(-0.48, 4.15, 0)
-rotation_degrees = Vector3(0, 0, -52)
+mesh = SubResource("BranchThick")
 
-[node name="BranchRight" type="MeshInstance3D" parent="."]
-mesh = SubResource("BranchMesh")
+[node name="BranchLeftOuter" type="MeshInstance3D" parent="Branches" unique_id=391756006]
+transform = Transform3D(0.406737, 0.912764, -0.037599, -0.912764, 0.407981, 0.024278, 0.037599, 0.024467, 0.998993, -1.18, 0.95, -0.08)
 material_override = SubResource("BranchMat")
-position = Vector3(0.48, 4.35, -0.05)
-rotation_degrees = Vector3(0, 0, 50)
+mesh = SubResource("BranchThin")
 
-[node name="BranchBack" type="MeshInstance3D" parent="."]
-mesh = SubResource("BranchMesh")
+[node name="BranchRightMain" type="MeshInstance3D" parent="Branches" unique_id=2142091138]
+transform = Transform3D(0.6015554, 0.7987672, 0.02840059, -0.7878332, 0.60018814, -0.13509378, -0.13052605, 0.05922302, 0.9896761, 0.62, 0.6199999, -0.05)
 material_override = SubResource("BranchMat")
-position = Vector3(0, 4.45, 0.42)
-rotation_degrees = Vector3(45, 0, 0)
+mesh = SubResource("BranchThick")
 
-[node name="FoliageLower" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafLarge")
+[node name="BranchRightOuter" type="MeshInstance3D" parent="Branches" unique_id=867992157]
+transform = Transform3D(0.422618, -0.903834, 0.068242, 0.903834, 0.426219, 0.039642, -0.068242, 0.045059, 0.996652, 1.25, 0.95, 0.15)
+material_override = SubResource("BranchMat")
+mesh = SubResource("BranchThin")
+
+[node name="BranchCenter" type="MeshInstance3D" parent="Branches" unique_id=471064472]
+transform = Transform3D(0.9998768, 0.01571171, 0, -0.01571171, 0.9998768, 0, 0, 0, 1, -0.12, 0.72, 0.08)
+material_override = SubResource("BranchMat")
+mesh = SubResource("BranchThick")
+
+[node name="BranchBack" type="MeshInstance3D" parent="Branches" unique_id=728286436]
+transform = Transform3D(1, 0, 0, 0, 0.787162, 0.6167462, 0, -0.6167462, 0.787162, 0.05, 0.6500001, -0.52)
+material_override = SubResource("BranchMat")
+mesh = SubResource("BranchThick")
+
+[node name="Foliage" type="Node3D" parent="." unique_id=1528843683]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1, 0)
+
+[node name="ClusterCrownTop" type="MeshInstance3D" parent="Foliage" unique_id=1065518043]
+transform = Transform3D(0.965926, -0.183013, 0.183013, 0.224144, 0.949056, -0.222518, -0.127632, 0.256037, 0.958212, 0.05, 2.85, 0.02)
+material_override = SubResource("LeafHighlightMat")
+mesh = SubResource("PolyHuge")
+
+[node name="ClusterFrontLeft" type="MeshInstance3D" parent="Foliage" unique_id=961570463]
+transform = Transform3D(0.819152, 0.34202, -0.460065, -0.422618, 0.904508, -0.080035, 0.388229, 0.255018, 0.885448, -1.05, 1.65, 0.68)
+material_override = SubResource("LeafMainMat")
+mesh = SubResource("PolyLarge")
+
+[node name="ClusterFrontRight" type="MeshInstance3D" parent="Foliage" unique_id=621689720]
+transform = Transform3D(0.866025, -0.433013, 0.25, 0.433013, 0.901378, 0.024369, -0.25, 0.087156, 0.964344, 0.95, 1.75, 0.45)
+material_override = SubResource("LeafHighlightMat")
+mesh = SubResource("PolyLarge")
+
+[node name="ClusterBackCenter" type="MeshInstance3D" parent="Foliage" unique_id=1093264897]
+transform = Transform3D(0.939693, 0.17101, -0.296198, -0.116978, 0.969846, 0.213211, 0.321394, -0.17101, 0.931379, 0.15, 2.15, -0.85)
 material_override = SubResource("LeafDarkMat")
-position = Vector3(0, 4.25, 0.02)
-scale = Vector3(1.15, 0.72, 1.05)
+mesh = SubResource("PolyLarge")
 
-[node name="FoliageLeft" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafMedium")
-material_override = SubResource("LeafMat")
-position = Vector3(-1.05, 4.75, -0.05)
-scale = Vector3(1.05, 0.82, 0.95)
+[node name="ClusterLeftOuter" type="MeshInstance3D" parent="Foliage" unique_id=233925493]
+transform = Transform3D(0.707107, 0.612372, -0.353553, -0.612372, 0.774519, 0.160388, 0.353553, 0.160388, 0.921676, -1.82, 1.15, 0.18)
+material_override = SubResource("LeafMainMat")
+mesh = SubResource("PolyMedium")
 
-[node name="FoliageRight" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafMedium")
-material_override = SubResource("LeafMat")
-position = Vector3(1.05, 4.95, 0.02)
-scale = Vector3(1.02, 0.82, 0.94)
+[node name="ClusterRightOuter" type="MeshInstance3D" parent="Foliage" unique_id=679911181]
+transform = Transform3D(0.766044, -0.573576, 0.286788, 0.573576, 0.816035, 0.070059, -0.286788, 0.110757, 0.951582, 1.82, 1.25, -0.22)
+material_override = SubResource("LeafHighlightMat")
+mesh = SubResource("PolyMedium")
 
-[node name="FoliageFront" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafMedium")
-material_override = SubResource("LeafLightMat")
-position = Vector3(0.0, 5.0, -0.95)
-scale = Vector3(0.92, 0.76, 0.88)
+[node name="ClusterFarRightLower" type="MeshInstance3D" parent="Foliage" unique_id=886882975]
+transform = Transform3D(0.906308, -0.364705, 0.213823, 0.364705, 0.930418, 0.034899, -0.213823, 0.046358, 0.975769, 2.15, 0.65, 0.15)
+material_override = SubResource("LeafMainMat")
+mesh = SubResource("PolySmall")
 
-[node name="FoliageBack" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafMedium")
-material_override = SubResource("LeafMat")
-position = Vector3(-0.05, 5.05, 0.85)
-scale = Vector3(0.92, 0.78, 0.88)
+[node name="ClusterFrontCenterNugget" type="MeshInstance3D" parent="Foliage" unique_id=77121386]
+transform = Transform3D(0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, 0.965926, -0.05, 1.18, 0.95)
+material_override = SubResource("LeafMainMat")
+mesh = SubResource("PolySmall")
 
-[node name="FoliageTop" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafSmall")
-material_override = SubResource("LeafLightMat")
-position = Vector3(0.12, 6.0, -0.02)
-scale = Vector3(1.05, 0.88, 1.02)
+[node name="ClusterLeftNuggetSmall" type="MeshInstance3D" parent="Foliage" unique_id=848935135]
+transform = Transform3D(0.866025, 0.353553, -0.353553, -0.353553, 0.933013, 0.066987, 0.353553, 0.066987, 0.933013, -1.88, 0.88, 0.72)
+material_override = SubResource("LeafHighlightMat")
+mesh = SubResource("PolyTiny")
 
-[node name="FoliageTopLeft" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafSmall")
-material_override = SubResource("LeafMat")
-position = Vector3(-0.68, 5.75, 0.28)
-scale = Vector3(0.82, 0.82, 0.82)
+[node name="ClusterTopSpire" type="MeshInstance3D" parent="Foliage" unique_id=1052574853]
+transform = Transform3D(0.92388, -0.270598, 0.270598, 0.34202, 0.916515, -0.199411, -0.183013, 0.282583, 0.941655, -0.48, 3.25, -0.15)
+material_override = SubResource("LeafHighlightMat")
+mesh = SubResource("PolyMedium")
 
-[node name="FoliageTopRight" type="MeshInstance3D" parent="."]
-mesh = SubResource("LeafSmall")
-material_override = SubResource("LeafLightMat")
-position = Vector3(0.72, 5.72, 0.22)
-scale = Vector3(0.78, 0.80, 0.78)
+[node name="TrunkCollision" type="CollisionShape3D" parent="." unique_id=1528414373]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+shape = SubResource("TrunkCollision")
 
-[node name="Collision" type="CollisionShape3D" parent="."]
-shape = SubResource("TreeCollision")
-position = Vector3(0, 2.7, 0)
+[node name="CanopyCollision" type="CollisionShape3D" parent="." unique_id=903489279]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.9, 0)
+shape = SubResource("CanopyCollision")

@@ -1,10 +1,17 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene format=3 uid="uid://bd01o8oqsv0db"]
 
-[ext_resource type="Script" path="res://scripts/player.gd" id="1"]
+[ext_resource type="Script" uid="uid://ct7ynw58rp5ma" path="res://scripts/player.gd" id="1"]
 
 [sub_resource type="CapsuleShape3D" id="C"]
 radius = 0.45
 height = 2.5
+
+[sub_resource type="SphereShape3D" id="SpringSphere"]
+radius = 0.22
+
+[sub_resource type="StandardMaterial3D" id="BodyMat"]
+albedo_color = Color(0.96, 0.72, 0.18, 1)
+roughness = 0.78
 
 [sub_resource type="CapsuleMesh" id="BodyMesh"]
 radius = 0.62
@@ -12,11 +19,19 @@ height = 1.75
 radial_segments = 16
 rings = 6
 
+[sub_resource type="StandardMaterial3D" id="HeadMat"]
+albedo_color = Color(1, 0.8, 0.28, 1)
+roughness = 0.76
+
 [sub_resource type="SphereMesh" id="HeadMesh"]
 radius = 0.72
 height = 1.44
 radial_segments = 20
 rings = 12
+
+[sub_resource type="StandardMaterial3D" id="DarkMat"]
+albedo_color = Color(0.055, 0.045, 0.035, 1)
+roughness = 0.55
 
 [sub_resource type="SphereMesh" id="EyeMesh"]
 radius = 0.095
@@ -24,17 +39,29 @@ height = 0.19
 radial_segments = 12
 rings = 8
 
+[sub_resource type="StandardMaterial3D" id="BeakMat"]
+albedo_color = Color(0.95, 0.38, 0.08, 1)
+roughness = 0.72
+
 [sub_resource type="SphereMesh" id="BeakMesh"]
 radius = 0.22
 height = 0.44
 radial_segments = 12
 rings = 6
 
+[sub_resource type="StandardMaterial3D" id="WingMat"]
+albedo_color = Color(0.84, 0.56, 0.1, 1)
+roughness = 0.82
+
 [sub_resource type="SphereMesh" id="WingMesh"]
 radius = 0.38
 height = 0.76
 radial_segments = 14
 rings = 8
+
+[sub_resource type="StandardMaterial3D" id="FootMat"]
+albedo_color = Color(0.9, 0.3, 0.06, 1)
+roughness = 0.78
 
 [sub_resource type="SphereMesh" id="FootMesh"]
 radius = 0.22
@@ -48,173 +75,155 @@ height = 0.56
 radial_segments = 12
 rings = 7
 
-[sub_resource type="StandardMaterial3D" id="BodyMat"]
-albedo_color = Color(0.96, 0.72, 0.18, 1)
-roughness = 0.78
-
-[sub_resource type="StandardMaterial3D" id="HeadMat"]
-albedo_color = Color(1, 0.8, 0.28, 1)
-roughness = 0.76
-
-[sub_resource type="StandardMaterial3D" id="WingMat"]
-albedo_color = Color(0.84, 0.56, 0.1, 1)
-roughness = 0.82
-
-[sub_resource type="StandardMaterial3D" id="DarkMat"]
-albedo_color = Color(0.055, 0.045, 0.035, 1)
-roughness = 0.55
-
-[sub_resource type="StandardMaterial3D" id="BeakMat"]
-albedo_color = Color(0.95, 0.38, 0.08, 1)
-roughness = 0.72
-
-[sub_resource type="StandardMaterial3D" id="FootMat"]
-albedo_color = Color(0.9, 0.3, 0.06, 1)
-roughness = 0.78
-
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" unique_id=970197838]
 script = ExtResource("1")
 
-[node name="Collision" type="CollisionShape3D" parent="."]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=2103394048]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
 shape = SubResource("C")
-position = Vector3(0, 1.25, 0)
 
-[node name="CharacterVisual" type="Node3D" parent="."]
+[node name="CameraMount" type="Node3D" parent="." unique_id=1285176857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.353999, 0)
 
-[node name="Body" type="MeshInstance3D" parent="CharacterVisual"]
-mesh = SubResource("BodyMesh")
-material_override = SubResource("BodyMat")
-position = Vector3(0, 1.3, 0)
-scale = Vector3(0.9, 1.0, 0.78)
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraMount" unique_id=658513983]
+transform = Transform3D(1, 0, 0, 0, 0.9563048, 0.2923717, 0, -0.2923717, 0.9563048, 0, 0, 0)
+shape = SubResource("SpringSphere")
+spring_length = 13.0
+margin = 0.2
 
-[node name="Chest" type="MeshInstance3D" parent="CharacterVisual"]
-mesh = SubResource("HeadMesh")
-material_override = SubResource("HeadMat")
-position = Vector3(0, 1.38, -0.28)
-scale = Vector3(0.72, 0.62, 0.38)
-
-[node name="HeadRig" type="Node3D" parent="CharacterVisual"]
-position = Vector3(0, 2.48, 0)
-
-[node name="Head" type="MeshInstance3D" parent="CharacterVisual/HeadRig"]
-mesh = SubResource("HeadMesh")
-material_override = SubResource("HeadMat")
-position = Vector3(0, 0.05, -0.02)
-scale = Vector3(1.0, 0.94, 0.98)
-
-[node name="LeftEye" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head"]
-mesh = SubResource("EyeMesh")
-material_override = SubResource("DarkMat")
-position = Vector3(-0.27, 0.13, -0.64)
-scale = Vector3(1.0, 1.25, 0.72)
-
-[node name="RightEye" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head"]
-mesh = SubResource("EyeMesh")
-material_override = SubResource("DarkMat")
-position = Vector3(0.27, 0.13, -0.64)
-scale = Vector3(1.0, 1.25, 0.72)
-
-[node name="Beak" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head"]
-mesh = SubResource("BeakMesh")
-material_override = SubResource("BeakMat")
-position = Vector3(0, -0.08, -0.7)
-scale = Vector3(1.65, 0.55, 1.15)
-
-[node name="LeftArm" type="Node3D" parent="CharacterVisual"]
-position = Vector3(-0.58, 1.67, 0.0)
-rotation_degrees = Vector3(0, 0, -8)
-
-[node name="Wing" type="MeshInstance3D" parent="CharacterVisual/LeftArm"]
-mesh = SubResource("WingMesh")
-material_override = SubResource("WingMat")
-position = Vector3(0, -0.28, 0.02)
-scale = Vector3(0.72, 1.5, 0.62)
-rotation_degrees = Vector3(0, 0, -10)
-
-[node name="LeftHandRig" type="Node3D" parent="CharacterVisual/LeftArm"]
-position = Vector3(0, -0.86, 0)
-
-[node name="LeftHand" type="MeshInstance3D" parent="CharacterVisual/LeftArm/LeftHandRig"]
-mesh = SubResource("EyeMesh")
-material_override = SubResource("HeadMat")
-position = Vector3(0, -0.25, 0)
-scale = Vector3(1.2, 1.15, 1.2)
-
-[node name="RightArm" type="Node3D" parent="CharacterVisual"]
-position = Vector3(0.58, 1.67, 0.0)
-rotation_degrees = Vector3(0, 0, 8)
-
-[node name="Wing" type="MeshInstance3D" parent="CharacterVisual/RightArm"]
-mesh = SubResource("WingMesh")
-material_override = SubResource("WingMat")
-position = Vector3(0, -0.28, 0.02)
-scale = Vector3(0.72, 1.5, 0.62)
-rotation_degrees = Vector3(0, 0, 10)
-
-[node name="RightHandRig" type="Node3D" parent="CharacterVisual/RightArm"]
-position = Vector3(0, -0.86, 0)
-
-[node name="RightHand" type="MeshInstance3D" parent="CharacterVisual/RightArm/RightHandRig"]
-mesh = SubResource("EyeMesh")
-material_override = SubResource("HeadMat")
-position = Vector3(0, -0.25, 0)
-scale = Vector3(1.2, 1.15, 1.2)
-
-[node name="LeftLeg" type="Node3D" parent="CharacterVisual"]
-position = Vector3(-0.25, 0.58, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/LeftLeg"]
-mesh = SubResource("WingMesh")
-material_override = SubResource("FootMat")
-position = Vector3(0, -0.34, 0)
-scale = Vector3(0.48, 1.15, 0.48)
-
-[node name="LeftFootRig" type="Node3D" parent="CharacterVisual/LeftLeg"]
-position = Vector3(0, -0.75, 0)
-
-[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/LeftLeg/LeftFootRig"]
-mesh = SubResource("FootMesh")
-material_override = SubResource("FootMat")
-position = Vector3(0, 0, -0.15)
-scale = Vector3(1.45, 0.62, 1.7)
-
-[node name="RightLeg" type="Node3D" parent="CharacterVisual"]
-position = Vector3(0.25, 0.58, 0)
-
-[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/RightLeg"]
-mesh = SubResource("WingMesh")
-material_override = SubResource("FootMat")
-position = Vector3(0, -0.34, 0)
-scale = Vector3(0.48, 1.15, 0.48)
-
-[node name="RightFootRig" type="Node3D" parent="CharacterVisual/RightLeg"]
-position = Vector3(0, -0.75, 0)
-
-[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/RightLeg/RightFootRig"]
-mesh = SubResource("FootMesh")
-material_override = SubResource("FootMat")
-position = Vector3(0, 0, -0.15)
-scale = Vector3(1.45, 0.62, 1.7)
-
-[node name="TailRig" type="Node3D" parent="CharacterVisual"]
-position = Vector3(0, 1.42, 0.45)
-rotation_degrees = Vector3(-8, 0, 0)
-
-[node name="Tail" type="MeshInstance3D" parent="CharacterVisual/TailRig"]
-mesh = SubResource("TailMesh")
-material_override = SubResource("WingMat")
-position = Vector3(0, 0, 0.08)
-scale = Vector3(1.25, 0.85, 0.8)
-rotation_degrees = Vector3(-10, 0, 0)
-
-[node name="TailTip" type="MeshInstance3D" parent="CharacterVisual/TailRig"]
-mesh = SubResource("TailMesh")
-material_override = SubResource("BodyMat")
-position = Vector3(0, 0.2, 0.25)
-scale = Vector3(0.72, 0.5, 0.5)
-rotation_degrees = Vector3(-18, 0, 0)
-
-[node name="Camera" type="Camera3D" parent="."]
-position = Vector3(0, 4, 8.5)
-rotation_degrees = Vector3(-19, 0, 0)
+[node name="Camera" type="Camera3D" parent="CameraMount/SpringArm3D" unique_id=929112304]
 current = true
+
+[node name="HoldTarget" type="Marker3D" parent="CameraMount/SpringArm3D/Camera" unique_id=1675490676]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.357552, -18.958466)
+
+[node name="CharacterVisual" type="Node3D" parent="." unique_id=197130892]
+
+[node name="Body" type="MeshInstance3D" parent="CharacterVisual" unique_id=1066344346]
+transform = Transform3D(0.9, 0, 0, 0, 1, 0, 0, 0, 0.78, 0, 1.3, 0)
+material_override = SubResource("BodyMat")
+mesh = SubResource("BodyMesh")
+
+[node name="Chest" type="MeshInstance3D" parent="CharacterVisual" unique_id=1082698822]
+transform = Transform3D(0.72, 0, 0, 0, 0.62, 0, 0, 0, 0.38, 0, 1.38, -0.28)
+material_override = SubResource("HeadMat")
+mesh = SubResource("HeadMesh")
+
+[node name="HeadRig" type="Node3D" parent="CharacterVisual" unique_id=1241574918]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.48, 0)
+
+[node name="Head" type="MeshInstance3D" parent="CharacterVisual/HeadRig" unique_id=965320305]
+transform = Transform3D(1, 0, 0, 0, 0.94, 0, 0, 0, 0.98, 0, 0.05, -0.02)
+material_override = SubResource("HeadMat")
+mesh = SubResource("HeadMesh")
+
+[node name="LeftEye" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head" unique_id=1448611752]
+transform = Transform3D(1, 0, 0, 0, 1.25, 0, 0, 0, 0.72, -0.27, 0.13, -0.64)
+material_override = SubResource("DarkMat")
+mesh = SubResource("EyeMesh")
+
+[node name="RightEye" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head" unique_id=1136591444]
+transform = Transform3D(1, 0, 0, 0, 1.25, 0, 0, 0, 0.72, 0.27, 0.13, -0.64)
+material_override = SubResource("DarkMat")
+mesh = SubResource("EyeMesh")
+
+[node name="Beak" type="MeshInstance3D" parent="CharacterVisual/HeadRig/Head" unique_id=882922836]
+transform = Transform3D(1.65, 0, 0, 0, 0.55, 0, 0, 0, 1.15, 0, -0.08, -0.7)
+material_override = SubResource("BeakMat")
+mesh = SubResource("BeakMesh")
+
+[node name="LeftArm" type="Node3D" parent="CharacterVisual" unique_id=608913922]
+transform = Transform3D(0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 0, 0, 1, -0.58, 1.67, 0)
+
+[node name="Wing" type="MeshInstance3D" parent="CharacterVisual/LeftArm" unique_id=1957971771]
+transform = Transform3D(0.7090616, 0.26047227, 0, -0.12502669, 1.4772116, 0, 0, 0, 0.62, 0, -0.28, 0.02)
+material_override = SubResource("WingMat")
+mesh = SubResource("WingMesh")
+
+[node name="LeftHandRig" type="Node3D" parent="CharacterVisual/LeftArm" unique_id=935941849]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.86, 0)
+
+[node name="LeftHand" type="MeshInstance3D" parent="CharacterVisual/LeftArm/LeftHandRig" unique_id=648352876]
+transform = Transform3D(1.2, 0, 0, 0, 1.15, 0, 0, 0, 1.2, 0, -0.25, 0)
+material_override = SubResource("HeadMat")
+mesh = SubResource("EyeMesh")
+
+[node name="RightArm" type="Node3D" parent="CharacterVisual" unique_id=1499730932]
+transform = Transform3D(0.99026805, -0.1391731, 0, 0.1391731, 0.99026805, 0, 0, 0, 1, 0.58, 1.67, 0)
+
+[node name="Wing" type="MeshInstance3D" parent="CharacterVisual/RightArm" unique_id=649490592]
+transform = Transform3D(0.7090616, -0.26047227, 0, 0.12502669, 1.4772116, 0, 0, 0, 0.62, 0, -0.28, 0.02)
+material_override = SubResource("WingMat")
+mesh = SubResource("WingMesh")
+
+[node name="RightHandRig" type="Node3D" parent="CharacterVisual/RightArm" unique_id=41285876]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.86, 0)
+
+[node name="RightHand" type="MeshInstance3D" parent="CharacterVisual/RightArm/RightHandRig" unique_id=293017875]
+transform = Transform3D(1.2, 0, 0, 0, 1.15, 0, 0, 0, 1.2, 0, -0.25, 0)
+material_override = SubResource("HeadMat")
+mesh = SubResource("EyeMesh")
+
+[node name="LeftLeg" type="Node3D" parent="CharacterVisual" unique_id=1607854109]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.58, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/LeftLeg" unique_id=1921176019]
+transform = Transform3D(0.48, 0, 0, 0, 1.15, 0, 0, 0, 0.48, 0, -0.34, 0)
+material_override = SubResource("FootMat")
+mesh = SubResource("WingMesh")
+
+[node name="LeftFootRig" type="Node3D" parent="CharacterVisual/LeftLeg" unique_id=1959165429]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/LeftLeg/LeftFootRig" unique_id=2116052982]
+transform = Transform3D(1.45, 0, 0, 0, 0.62, 0, 0, 0, 1.7, 0, 0, -0.15)
+material_override = SubResource("FootMat")
+mesh = SubResource("FootMesh")
+
+[node name="RightLeg" type="Node3D" parent="CharacterVisual" unique_id=2010831171]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.58, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="CharacterVisual/RightLeg" unique_id=2132569498]
+transform = Transform3D(0.48, 0, 0, 0, 1.15, 0, 0, 0, 0.48, 0, -0.34, 0)
+material_override = SubResource("FootMat")
+mesh = SubResource("WingMesh")
+
+[node name="RightFootRig" type="Node3D" parent="CharacterVisual/RightLeg" unique_id=1668042885]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="CharacterVisual/RightLeg/RightFootRig" unique_id=1610236704]
+transform = Transform3D(1.45, 0, 0, 0, 0.62, 0, 0, 0, 1.7, 0, 0, -0.15)
+material_override = SubResource("FootMat")
+mesh = SubResource("FootMesh")
+
+[node name="TailRig" type="Node3D" parent="CharacterVisual" unique_id=596258086]
+transform = Transform3D(1, 0, 0, 0, 0.99026805, 0.1391731, 0, -0.1391731, 0.99026805, 0, 1.42, 0.45)
+
+[node name="Tail" type="MeshInstance3D" parent="CharacterVisual/TailRig" unique_id=1308802421]
+transform = Transform3D(1.25, 0, 0, 0, 0.8370866, 0.13891855, 0, -0.14760095, 0.7878462, 0, 0, 0.08)
+material_override = SubResource("WingMat")
+mesh = SubResource("TailMesh")
+
+[node name="TailTip" type="MeshInstance3D" parent="CharacterVisual/TailRig" unique_id=2064295407]
+transform = Transform3D(0.72, 0, 0, 0, 0.47552827, 0.1545085, 0, -0.1545085, 0.47552827, 0, 0.2, 0.25)
+material_override = SubResource("BodyMat")
+mesh = SubResource("TailMesh")
+
+[node name="GrabPrompt" type="Label3D" parent="." unique_id=1983750524]
+visible = false
+billboard = 1
+no_depth_test = true
+modulate = Color(1, 0.9, 0.2, 1)
+outline_modulate = Color(0, 0, 0, 0.95)
+text = "[E] GRAB"
+font_size = 40
+
+[node name="WeldPrompt" type="Label3D" parent="." unique_id=1983750525]
+visible = false
+billboard = 1
+no_depth_test = true
+modulate = Color(1, 0.65, 0.1, 1)
+outline_modulate = Color(0, 0, 0, 0.95)
+text = "[C] WELD"
+font_size = 42
+outline_size = 12

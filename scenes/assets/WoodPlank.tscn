@@ -1,0 +1,74 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://shaders/WoodPlank.gdshader" id="1_wood_shader"]
+
+[sub_resource type="PhysicsMaterial" id="WoodPhysicsMat"]
+friction = 0.75
+rough = true
+bounce = 0.08
+
+[sub_resource type="ShaderMaterial" id="WoodPlankShaderMat"]
+render_priority = 0
+shader = ExtResource("1_wood_shader")
+shader_parameter/wood_base_color = Color(0.70, 0.43, 0.22, 1)
+shader_parameter/wood_dark_color = Color(0.46, 0.26, 0.12, 1)
+shader_parameter/wood_light_color = Color(0.80, 0.52, 0.28, 1)
+shader_parameter/grain_frequency = 14.0
+shader_parameter/ring_frequency = 4.0
+
+[sub_resource type="StandardMaterial3D" id="WoodDarkMat"]
+diffuse_mode = 2
+albedo_color = Color(0.38, 0.22, 0.10, 1)
+roughness = 0.85
+metallic = 0.0
+
+[sub_resource type="BoxMesh" id="PlankMesh_Center"]
+size = Vector3(0.34, 0.18, 3.8)
+
+[sub_resource type="BoxMesh" id="PlankMesh_SideLeft"]
+size = Vector3(0.33, 0.175, 3.78)
+
+[sub_resource type="BoxMesh" id="PlankMesh_SideRight"]
+size = Vector3(0.33, 0.175, 3.79)
+
+[sub_resource type="BoxShape3D" id="WoodPlankCollision"]
+size = Vector3(1.05, 0.18, 3.8)
+
+[node name="WoodPlank" type="RigidBody3D" groups=["blocks"]]
+collision_layer = 1
+collision_mask = 1
+mass = 28.0
+physics_material_override = SubResource("WoodPhysicsMat")
+linear_damp = 0.15
+angular_damp = 0.25
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("WoodPlankCollision")
+
+[node name="VisualModel" type="Node3D" parent="."]
+
+[node name="Plank_Center" type="MeshInstance3D" parent="VisualModel"]
+material_override = SubResource("WoodPlankShaderMat")
+mesh = SubResource("PlankMesh_Center")
+
+[node name="Plank_Left" type="MeshInstance3D" parent="VisualModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.345, -0.002, 0.005)
+material_override = SubResource("WoodPlankShaderMat")
+mesh = SubResource("PlankMesh_SideLeft")
+
+[node name="Plank_Right" type="MeshInstance3D" parent="VisualModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.345, -0.002, -0.005)
+material_override = SubResource("WoodPlankShaderMat")
+mesh = SubResource("PlankMesh_SideRight")
+
+[node name="Seam_Left" type="MeshInstance3D" parent="VisualModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.172, 0.005, 0)
+material_override = SubResource("WoodDarkMat")
+mesh = SubResource("PlankMesh_SideLeft")
+scale = Vector3(0.04, 1.02, 1.002)
+
+[node name="Seam_Right" type="MeshInstance3D" parent="VisualModel"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.172, 0.005, 0)
+material_override = SubResource("WoodDarkMat")
+mesh = SubResource("PlankMesh_SideRight")
+scale = Vector3(0.04, 1.02, 1.002)

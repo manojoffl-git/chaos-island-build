@@ -31,6 +31,38 @@ offset_bottom = -36.0
 grow_vertical = 0
 script = ExtResource("2")
 
+[node name="RotateJoystick" type="Control" parent="." unique_id=566296918]
+visible = false
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -460.0
+offset_top = -230.0
+offset_right = -280.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("2")
+
+[node name="RotateLabel" type="Label" parent="RotateJoystick"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -60.0
+offset_top = -28.0
+offset_right = 60.0
+offset_bottom = -4.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.3, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_font_sizes/font_size = 14
+text = "ROTATE OBJ"
+horizontal_alignment = 1
+
 [node name="CameraTouch" type="Control" parent="." unique_id=330000001]
 layout_mode = 3
 anchor_left = 0.5
@@ -98,6 +130,25 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("ButtonStyle")
 text = "THROW"
+
+[node name="Weld" type="Button" parent="Actions" unique_id=2145573434]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 915.0
+offset_top = 135.0
+offset_right = 1030.0
+offset_bottom = 205.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.72, 0.15, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("ButtonStyle")
+text = "WELD"
 
 [node name="Disaster" type="Button" parent="Actions" unique_id=1336202856]
 layout_mode = 1

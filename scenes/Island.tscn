@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/island_generator.gd" id="1_island"]
+
+[sub_resource type="StandardMaterial3D" id="IslandMaterial"]
+cull_mode = 0
+diffuse_mode = 2
+vertex_color_use_as_albedo = true
+roughness = 0.90
+
+[node name="Island" type="Node3D"]
+script = ExtResource("1_island")
+terrain_material = SubResource("IslandMaterial")

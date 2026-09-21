@@ -1,5 +1,8 @@
-res://scenes/Main.tscn::414927cdfe0a9e37b7cefbe1d1cc9a91::1789911214::res://.godot/exported/133200997/export-4a24720ee5e787dbe30abc634fa3679d-Main.scn
-res://scenes/MobileControls.tscn::93e1ddb54eeec935056c12a00fae0355::1789913340::res://.godot/exported/133200997/export-89637f337a73f42f1a493f5f12e268b3-MobileControls.scn
-res://scenes/Player.tscn::a285dfcec90dfae3db3763aef4518ade::1789910273::res://.godot/exported/133200997/export-e8220e74d1354b9e6b168b513689419c-Player.scn
-res://scenes/TsunamiWave.tscn::f112c57592c73e414985f0f512643075::1789910273::res://.godot/exported/133200997/export-b7ae5b0c8dbd0caf11d6b78f2357ba06-TsunamiWave.scn
-res://scenes/WorldObjects.tscn::c917d8114fef3aa09b2a2338a8f46ed8::1789910273::res://.godot/exported/133200997/export-57e7fa664c54fb0f614ee3ebe6252e86-WorldObjects.scn
+res://scenes/Main.tscn::cd0c0fe0142ee027e2154295eb0ca917::1789999666::res://.godot/exported/133200997/export-4a24720ee5e787dbe30abc634fa3679d-Main.scn
+res://scenes/MobileControls.tscn::3d5c15731ad76da836e66656b75ee5a6::1790002866::res://.godot/exported/133200997/export-89637f337a73f42f1a493f5f12e268b3-MobileControls.scn
+res://scenes/Player.tscn::d4facf2a2800feefdd4aaee828dd5402::1790002852::res://.godot/exported/133200997/export-e8220e74d1354b9e6b168b513689419c-Player.scn
+res://scenes/TsunamiWave.tscn::3b826def02e2d7f8c397bdc7cc95595a::1789997393::res://.godot/exported/133200997/export-b7ae5b0c8dbd0caf11d6b78f2357ba06-TsunamiWave.scn
+res://scenes/WorldObjects.tscn::402c2d2b00b895d9029830bdf5c9c3f2::1789995453::res://.godot/exported/133200997/export-57e7fa664c54fb0f614ee3ebe6252e86-WorldObjects.scn
+res://scenes/assets/Tree_Stylized.tscn::98d6946ef3032b4603a1a4b197748bee::1789995850::res://.godot/exported/133200997/export-657cdc9d5f8c4acd0abc16562c4d89f5-Tree_Stylized.scn
+res://scenes/assets/WoodPlank.tscn::9c306647d8e7f977fe9450c1050da245::1789998007::res://.godot/exported/133200997/export-9d74f317e86531092354ff999432f450-WoodPlank.scn
+res://scenes/Island.tscn::4aab51a9964c3b96db6ea068090f3bd2::1789993555::res://.godot/exported/133200997/export-0b70c5d72af776c951c4a27aa90a92fc-Island.scn
