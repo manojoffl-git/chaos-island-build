@@ -7,11 +7,12 @@ height = 4.8
 radial_segments = 8
 rings = 3
 
-[sub_resource type="ConeMesh" id="RootMesh"]
+[sub_resource type="CylinderMesh" id="RootMesh"]
 top_radius = 0.30
 bottom_radius = 0.72
 height = 0.9
 radial_segments = 8
+rings = 2
 
 [sub_resource type="CylinderMesh" id="BranchMesh"]
 top_radius = 0.10
